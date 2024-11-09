@@ -24,7 +24,7 @@ const DeviceSchema = mongoose.Schema({
   devicename: { type: String },
   location: { type: String },
   devicetype: { type: String },
-  status: { type: String }
+  status: { type: Boolean }
 });
 
 const UserSchema = mongoose.Schema({
@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
       const user = await UserDetails.findOne({ email: data.email });
       if (user) {
         if (user.password === data.password) {
-          return res({ status: 200, message: 'Login successful' });
+          return res({ status: 200, message: 'Login successful',data:user});
         } else {
           return res({ status: 400, error: 'Invalid password' });
         }
@@ -73,11 +73,11 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('addroom',async(room, res) => {
+  socket.on('addroom',async({email,room}, res) => {
      try {
-        const user = await UserDetails.findOne({email:room.email});
+        const user = await UserDetails.findOne({email});
         if(user){
-            user.rooms.push({name:room.name});
+            user.rooms.push(room);
             await user.save();
             return res({status:200});
         }
@@ -86,6 +86,20 @@ io.on('connection', (socket) => {
      }
   })
 
+  socket.on('newdevice', async ({devicedata,email},res) =>{
+    try {
+        const user = await UserDetails.findOne({email});
+        if(user){
+            user.devices.push(devicedata);
+            await user.save();
+            return res({status:200});
+        }else{
+            return res({status:400});
+        }
+    } catch (error) {
+        console.log(error);
+    }
+  })
 });
 
 server.listen(5000, () => {

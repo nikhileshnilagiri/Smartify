@@ -5,6 +5,7 @@ import Light from "../Components/Light";
 import Fan from "../Components/Fan";
 import AC from "../Components/AC";
 import { useUser } from "../Context/UserContext";
+import CustomTabPanel from '../Components/CustomTab';
 
 function Dashboard() {
   const [value, setValue] = useState(0);
@@ -12,6 +13,7 @@ function Dashboard() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    
   };
 
   return (
@@ -76,12 +78,13 @@ function Dashboard() {
                       >
                         <Tab label="All devices" sx={{ minHeight: "28px", textTransform: 'none', fontSize: "15px", p: 1 }} />
                         {user.rooms.map((room) => {
-                          return <Tab label={room.roomname} sx={{ minHeight: "28px", textTransform: 'none', fontSize: "15px", p: 1 }} />
+                          return <Tab label={room.name} sx={{ minHeight: "28px", textTransform: 'none', fontSize: "15px", p: 1 }} />
                         })}
 
                       </Tabs>
                     </Box>
                   </div>
+                  <CustomTabPanel value={value} index={0}>
                   <div className="row mt-4">
                     {user.devices.map((device) => {
                       if (device.devicetype === "Light") {
@@ -96,7 +99,27 @@ function Dashboard() {
                         <h4>No devices found</h4>
                       </div>);
                     })}
-                  </div>
+                  </div></CustomTabPanel>
+                  {user.rooms.map((room, index) => (
+                        <CustomTabPanel value={value} index={index + 1} key={room.name}>
+                          <div className="row mt-4">
+                            {user.devices.filter(device => device.location === room.name).map((device) => {
+                              if (device.devicetype === "Light") {
+                                return <Light key={device.id} name={device.devicename} />;
+                              } else if (device.devicetype === "Fan") {
+                                return <Fan key={device.id} name={device.devicename} />;
+                              } else if (device.devicetype === "Air Conditioner") {
+                                return <AC key={device.id} name={device.devicename} />;
+                              }
+                              return (
+                                <div className="d-flex justify-content-center align-items-center" key={device.id}>
+                                  <h4>No devices found in {room.name}</h4>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </CustomTabPanel>
+                      ))}
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { Tabs, Tab, Box } from '@mui/material';
 import PopUp from "../Components/PopUp";
 import { useUser } from "../Context/UserContext";
 import Device from "../Components/Device";
+import CustomTabPanel from "../Components/CustomTab";
 
 export default function DeviceManager() {
   const { user } = useUser();
@@ -43,7 +44,7 @@ export default function DeviceManager() {
                 >
                   <Tab label="All devices" sx={{ minHeight: "28px", textTransform: 'none', fontSize: "15px", p: 1 }} />
                   {user.rooms.map((room) => {
-                    return <Tab label={room.roomname} sx={{ minHeight: "28px", textTransform: 'none', fontSize: "15px", p: 1 }} />
+                    return <Tab label={room.name} sx={{ minHeight: "28px", textTransform: 'none', fontSize: "15px", p: 1 }} />
                   })}
 
                 </Tabs>
@@ -63,22 +64,34 @@ export default function DeviceManager() {
                 Add Device
               </button>
             </div>
-
-            <div className="row">
+            
+            <CustomTabPanel value={value} index={0}>
+            <div className="row mt-4">
               {user.devices
                 .filter(device => device.devicename.toLowerCase().includes(searchTerm.toLowerCase()))
                 .map((device) => (
-                  <div key={device.devicename} className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+                  
                     <Device
                       name={device.devicename}
                       location={device.location}
                       type={device.devicetype}
-                      status={device.status}
-                      battery={device.battery}
                     />
-                  </div>
+                  
                 ))}
             </div>
+            </CustomTabPanel>
+
+            {user.rooms.map((room, index) => (
+                        <CustomTabPanel value={value} index={index + 1} key={room.name}>
+                          <div className="row mt-4">
+                            {user.devices.filter(device => device.location === room.name).map((device) => {
+                              return(
+                                <Device name={device.devicename} location={device.location} type={device.devicetype}/>
+                              );
+                            })}
+                          </div>
+                        </CustomTabPanel>
+                      ))}
           </div>
         </div>
 

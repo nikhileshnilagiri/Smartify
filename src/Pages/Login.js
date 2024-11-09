@@ -3,6 +3,8 @@ import { Button, TextField, Checkbox, FormControlLabel, Typography, Divider } fr
 import { Google } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../Context/SocketContext';
+import { useUser } from '../Context/UserContext';
+
 
 
 function Login() {
@@ -11,6 +13,7 @@ function Login() {
     const navigate = useNavigate();
     const handleSignUp = () => navigate('/signup');
     const {socket} = useSocket();
+    const {user,setUser} = useUser();
 
     const handleLogin = (e) => {
       e.preventDefault();
@@ -19,6 +22,7 @@ function Login() {
         socket.emit('login',data,(res)=>{
           if(res.status===200){
             navigate('/dashboard');
+            setUser(res.data);
           }else{
             alert('Invalid! Credentails');
           }

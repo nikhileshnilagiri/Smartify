@@ -1,10 +1,13 @@
 import React from "react";
 import {Devices,Dashboard} from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
+import { useUser} from "../Context/UserContext";
 
 function NavBar() {
 
     const navigate = useNavigate();
+    const {user} = useUser();
+
     const handleDashboard = () => navigate("/dashboard");
     const handleDevices = () => navigate("/devices");
     const handleSettings = () => navigate("/settings");
@@ -38,7 +41,7 @@ function NavBar() {
                     </li>
                     <li className="nav-item dropdown">
                         <span className="nav-link dropdown-toggle fs-6" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Username
+                            {user.username}
                         </span>
                         <ul className="dropdown-menu dropdown-menu-end">
                             <li><span className="dropdown-item fs-6" onClick={handleSettings}>Settings</span></li>

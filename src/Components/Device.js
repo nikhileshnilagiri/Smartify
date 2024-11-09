@@ -4,7 +4,8 @@ import { LightbulbOutlined, AcUnitOutlined, AirOutlined, EditOutlined, DeleteOut
 
 function Device(props) {
     return (
-        <div className="card border-1 h-100">
+        <div className="col-12 col-sm-6 col-md-3 mb-3 d-flex align-items-stretch">
+        <div className="card border-1 h-100 w-100">
             <div className="card-body d-flex flex-column">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="card-title mb-0">{props.name}</h5>
@@ -25,7 +26,7 @@ function Device(props) {
                     </button>
                 </div>
             </div>
-        </div>
+        </div></div>
     );
 }
 

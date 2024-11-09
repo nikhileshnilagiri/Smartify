@@ -4,24 +4,26 @@ import { useUser } from "../Context/UserContext";
 import { useSocket } from '../Context/SocketContext';
 
 function PopUp(props) {
-    const { user, addDevice } = useUser();
+    const { user, addDevice, newroom } = useUser();
     const {socket} = useSocket();
 
     const [activeStep, setActiveStep] = useState("Start");
-    const [room,setroom] = useState({email:user.email , name:""});
-    const [devicedata,setdevicedata] = useState({email:user.email ,devicename:"",location:"",devicetype:"Light",status:false});
+    const [room,setroom] = useState({name:""});
+    const [devicedata,setdevicedata] = useState({devicename:"",location:"",devicetype:"Light",status:false});
 
     const handleSave = (e) =>{
         e.preventDefault();
         if(activeStep==="Room"){
             if(socket){
-                socket.emit('addroom',room,(res)=>{
-                    if(res.status===200){alert('Successful')}
+                socket.emit('addroom',{email:user.email,room},(res)=>{
+                    if(res.status===200){
+                        newroom(room);
+                    }
                 });
             }
         }else if(activeStep==="Device"){
             if(socket){
-                socket.emit('newdevice',devicedata,(res)=>{
+                socket.emit('newdevice',{devicedata,email:user.email},(res)=>{
                     if(res.status===200){addDevice(devicedata)}
                 })
             }
@@ -47,7 +49,6 @@ function PopUp(props) {
                 type="text"
                 className="form-control"
                 placeholder="Room Name"
-                value={RoomName}
                 onChange={(e) => setroom((prev)=>({...prev,name:e.target.value}))}
             />
         </div>
@@ -65,7 +66,6 @@ function PopUp(props) {
                     type="text"
                     className="form-control"
                     placeholder="Device Name"
-                    value={Dname}
                     onChange={(e) => setdevicedata((prev)=>({...prev,devicename:e.target.value}))}
                 />
             </div>
@@ -76,13 +76,12 @@ function PopUp(props) {
                 <select
                     id="selectRoom"
                     className="form-select"
-                    value={selectedRoom}
                     onChange={(e) => setdevicedata((prev)=>({...prev,location:e.target.value}))}
                 >
                     <option value="">Choose a room...</option>
                     {user.rooms.map((room) => (
-                        <option key={room.roomname} value={room.roomname}>
-                            {room.roomname}
+                        <option key={room.name} value={room.name}>
+                            {room.name}
                         </option>
                     ))}
                 </select>
@@ -94,7 +93,6 @@ function PopUp(props) {
                 <select
                     id="selectDeviceType"
                     className="form-select"
-                    value={Dtype}
                     onChange={(e) => setdevicedata((prev)=>({...prev,devicetype:e.target.value}))}
                 >
                     <option value="Light">Light</option>
@@ -151,7 +149,6 @@ function PopUp(props) {
                     <Button
                         onClick={handleSave}
                         color="primary"
-                        disabled={!RoomName}
                     >
                         Save Room
                     </Button>
@@ -160,7 +157,7 @@ function PopUp(props) {
                     <Button
                         onClick={handleSave}
                         color="primary"
-                        disabled={!Dname || !Dtype || !selectedRoom || !selectedDevice}
+                        
                     >
                         Save Device
                     </Button>
