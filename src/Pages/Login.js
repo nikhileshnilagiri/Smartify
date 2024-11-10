@@ -2,34 +2,36 @@ import React, { useState } from 'react';
 import { Button, TextField, Checkbox, FormControlLabel, Typography, Divider } from '@mui/material';
 import { Google } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useSocket } from '../Context/SocketContext';
 import { useUser } from '../Context/UserContext';
-
 
 
 function Login() {
 
-    const [data,setdata] = useState({email:'',password:''});
-    const navigate = useNavigate();
-    const handleSignUp = () => navigate('/signup');
-    const {socket} = useSocket();
-    const {user,setUser} = useUser();
+  const [data, setdata] = useState({ email: '', password: '' });
+  const navigate = useNavigate();
+  const { setUser } = useUser();
 
-    const handleLogin = (e) => {
-      e.preventDefault();
-      console.log(data);
-      if(socket){
-        socket.emit('login',data,(res)=>{
-          if(res.status===200){
-            navigate('/dashboard');
-            setUser(res.data);
-          }else{
-            alert('Invalid! Credentails');
-          }
-        })
+  const handleSignUp = () => navigate('/signup');
+  
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      if (response.ok) {
+        const userdata = await response.json();
+        setUser(userdata);
+        navigate("/dashboard");
+      } else {
+        alert("Login Falied,Invalid Credentials")
       }
-
+    } catch (error) {
+      console.log(error);
     }
+  }
 
   return (
     <section className="vh-100">
@@ -56,7 +58,7 @@ function Login() {
                 fullWidth
                 margin="normal"
                 placeholder="Enter your email"
-                onChange={(e) => setdata((prevdata) => ({...prevdata,email:e.target.value}))}
+                onChange={(e) => setdata((prevdata) => ({ ...prevdata, email: e.target.value }))}
               />
 
               <TextField
@@ -66,7 +68,7 @@ function Login() {
                 fullWidth
                 margin="normal"
                 placeholder="Enter your password"
-                onChange={(e) => setdata((prevdata) => ({...prevdata,password:e.target.value}))}
+                onChange={(e) => setdata((prevdata) => ({ ...prevdata, password: e.target.value }))}
               />
 
 
@@ -106,7 +108,7 @@ function Login() {
             </form>
             <Typography variant="body2" align="center" color="black" className="mt-3">
               Don't have an account?{' '}
-              <span style={{color:"blue", cursor:"pointer"}} onClick={handleSignUp}>
+              <span style={{ color: "blue", cursor: "pointer" }} onClick={handleSignUp}>
                 Sign Up
               </span>
             </Typography>

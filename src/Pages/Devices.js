@@ -2,7 +2,7 @@ import { useState } from "react";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Tabs, Tab, Box } from '@mui/material';
 
-import PopUp from "../Components/PopUp";
+import PopUp from "../Components/AddPopUp";
 import { useUser } from "../Context/UserContext";
 import Device from "../Components/Device";
 import CustomTabPanel from "../Components/CustomTab";
@@ -70,31 +70,29 @@ export default function DeviceManager() {
               {user.devices
                 .filter(device => device.devicename.toLowerCase().includes(searchTerm.toLowerCase()))
                 .map((device) => (
-                  
                     <Device
                       name={device.devicename}
                       location={device.location}
                       type={device.devicetype}
+                      id={device.deviceid}
                     />
                   
                 ))}
             </div>
             </CustomTabPanel>
-
             {user.rooms.map((room, index) => (
-                        <CustomTabPanel value={value} index={index + 1} key={room.name}>
-                          <div className="row mt-4">
-                            {user.devices.filter(device => device.location === room.name).map((device) => {
-                              return(
-                                <Device name={device.devicename} location={device.location} type={device.devicetype}/>
-                              );
-                            })}
-                          </div>
-                        </CustomTabPanel>
-                      ))}
+                  <CustomTabPanel value={value} index={index + 1} key={room.name}>
+                    <div className="row mt-4">
+                      {user.devices.filter(device => device.location === room.name).map((device) => {
+                        return(
+                          <Device name={device.devicename} location={device.location} type={device.devicetype} id={device.deviceid}/>
+                        );
+                      })}
+                    </div>
+                  </CustomTabPanel>
+              ))}
           </div>
         </div>
-
         <PopUp value={open} onCancel={() => setOpen(false)} />
       </div>
     </main>

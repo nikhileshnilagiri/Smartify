@@ -13,19 +13,30 @@ export const UserProvider = ({ children }) => {
 
   const logout = () => setUser(null);
 
-  const addDevice = (device) => {
+  const newDevice = (device) => {
     setUser((prev) => ({
       ...prev,
       devices: [...prev.devices, device],
     }));
   };
 
-  const newroom = (room) => {
-    setUser((prev) => ({...prev,rooms:[...prev.rooms,room]}))
-  }; 
+  const newRoom = (room) => {
+    setUser((prev) => ({
+      ...prev,
+      rooms: [...prev.rooms, room],
+    }));
+  };
+
+  const removeDevice = (deviceId) => {
+    // Filter out the device with the given deviceId
+    setUser((prev) => ({
+      ...prev,
+      devices: prev.devices.filter(device => device.deviceid !== deviceId), // Assuming devices have an _id
+    }));
+  };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, addDevice, newroom }}>
+    <UserContext.Provider value={{ user, setUser, logout, newDevice, newRoom, removeDevice }}>
       {children}
     </UserContext.Provider>
   );

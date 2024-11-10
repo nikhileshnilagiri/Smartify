@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
 import { Button, TextField, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useSocket } from "../Context/SocketContext";
+
 
 
 function Signup() {
 
-    const [data,setdata] = useState({username:"",email:"",password:""});
+    const [data,setdata] = useState({username:'',email:'',password:''});
     const navigate = useNavigate();
-    const handleLogin = () => navigate("/");
-    const { socket } = useSocket();
 
-    const handleSignUp = (e) =>{
+    const handleLogin = () => navigate("/");
+
+    const handleSignUp = async (e) =>{
       e.preventDefault();
-      console.log(data);
-      if(socket){
-        socket.emit('signup',data,(res)=>{
-          if(res.status===200){
-            alert('SignUp Successfull');
-            navigate('/');
-          }else{
-            alert('Invalid! Please try again');
-          }
+      try {
+        const response = await fetch('http://localhost:8080/signup',{
+          method:'POST',
+          headers: { 'Content-Type':'application/json'},
+          body:JSON.stringify(data)
         })
+        if(response.ok){
+          navigate('/');
+          alert('SignUp Successfull');
+        }else{
+          alert('SignUp Failed')
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
 

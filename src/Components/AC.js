@@ -15,18 +15,24 @@ function AC(props) {
                     <h6 className="card-title" style={{ fontSize: '1.25rem' }}>{props.name}</h6>
                     <div className="d-flex justify-content-between align-items-center">
                         <p className="mb-0" style={{ fontSize: '1.1rem' }}>Power</p>
-                        <IconButton>
+                        <IconButton onClick={()=>setPowerOn(prevPowerOn => !prevPowerOn)}>
                             <PowerSettingsNew fontSize="large" color={powerOn ? "success" : "action"} />
                         </IconButton>
                     </div>
                     <div className="d-flex justify-content-between align-items-center">
                         <p className="mb-0 me-2">Temp:</p>
                         <div>
-                            <IconButton size="small" style={{ fontSize: '0.875rem' }}>
+                            <IconButton 
+                                size="small" 
+                                style={{ fontSize: '0.875rem' }}
+                                onClick={()=>setTemperature(prevTemp => Math.max(prevTemp - 1, 16))}>
                                 <Remove fontSize="small" />
                             </IconButton>
                             <span className="mx-1">{temperature}°</span>
-                            <IconButton size="small" style={{ fontSize: '0.875rem' }}>
+                            <IconButton 
+                                size="small" 
+                                style={{ fontSize: '0.875rem' }}
+                                onClick={()=>setTemperature(prevTemp => Math.min(prevTemp + 1, 30))}>
                                 <Add fontSize="small" />
                             </IconButton>
                         </div>

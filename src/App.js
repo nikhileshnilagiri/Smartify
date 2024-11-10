@@ -6,13 +6,13 @@ import Navbar from "./Components/Navbar";
 import Dashboard from "./Pages/Dashboard";
 import Devices from "./Pages/Devices";
 import { UserProvider } from "./Context/UserContext";
-import { SocketProvider } from "./Context/SocketContext";
+import { WebSocketProvider } from './Context/WebSocketContext';
 
 
 function App() {
   return (
     <UserProvider>
-      <SocketProvider>
+      <WebSocketProvider>
         <Router>
           <Routes>
             <Route path="/" element={<Login />} />
@@ -25,7 +25,7 @@ function App() {
                 </Routes></>
             } />
           </Routes>
-        </Router></SocketProvider></UserProvider>
+        </Router></WebSocketProvider></UserProvider>
   )
 }
 export default App;
