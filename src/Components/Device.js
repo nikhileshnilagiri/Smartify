@@ -68,6 +68,7 @@ function Device(props) {
                 value={openUpdatePopup}
                 device={selectedDevice}
                 onClose={closeUpdatePopupHandler}
+                did={props.id}
             />
         </div>
     );

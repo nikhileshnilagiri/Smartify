@@ -28,15 +28,23 @@ export const UserProvider = ({ children }) => {
   };
 
   const removeDevice = (deviceId) => {
-    // Filter out the device with the given deviceId
     setUser((prev) => ({
       ...prev,
-      devices: prev.devices.filter(device => device.deviceid !== deviceId), // Assuming devices have an _id
+      devices: prev.devices.filter(device => device.deviceid !== deviceId),
+    }));
+  };
+
+  const updateDevice = (deviceId, updatedDevice) => {
+    setUser((prev) => ({
+      ...prev,
+      devices: prev.devices.map((device) =>
+        device.deviceid === deviceId ? { ...device, ...updatedDevice } : device
+      ),
     }));
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, newDevice, newRoom, removeDevice }}>
+    <UserContext.Provider value={{ user, setUser, logout, newDevice, newRoom, removeDevice, updateDevice }}>
       {children}
     </UserContext.Provider>
   );

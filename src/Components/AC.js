@@ -1,12 +1,22 @@
 import React, { useState } from "react";
 import { Remove, Add, PowerSettingsNew} from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
+import { useWebSocket } from "../Context/WebSocketContext";
 
 
 
 function AC(props) {
     const [temperature, setTemperature] = useState(22);
     const [powerOn, setPowerOn] = useState(false);
+    const {sendMessage} = useWebSocket();
+
+    const handlePower = () => {
+        setPowerOn(prevPowerOn => !prevPowerOn);
+        sendMessage(JSON.stringify({
+            type: "AC_CONTROL",
+            deviceid: props.id,
+        }));
+    }
 
     return (
         <div className="col-12 col-sm-6 col-md-3 mb-3 d-flex align-items-stretch">
@@ -15,7 +25,7 @@ function AC(props) {
                     <h6 className="card-title" style={{ fontSize: '1.25rem' }}>{props.name}</h6>
                     <div className="d-flex justify-content-between align-items-center">
                         <p className="mb-0" style={{ fontSize: '1.1rem' }}>Power</p>
-                        <IconButton onClick={()=>setPowerOn(prevPowerOn => !prevPowerOn)}>
+                        <IconButton onClick={handlePower}>
                             <PowerSettingsNew fontSize="large" color={powerOn ? "success" : "action"} />
                         </IconButton>
                     </div>

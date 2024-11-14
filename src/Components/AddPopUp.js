@@ -20,16 +20,13 @@ function PopUp(props) {
 
 
     useEffect(() => {
-        // Check if messages is not undefined or null
         if (messages) {
             console.log('Received messages:', messages);
     
-            // Check if the type is 'DEVICE_LIST' and messages.devices is an array
             if (messages.type === "DEVICE_LIST" && Array.isArray(messages.devices)) {
                 console.log('Devices:', messages.devices);
     
                 setDeviceList((prev) => {
-                    // Merge previous and new devices, ensuring no duplicates based on deviceid
                     const updatedList = [...prev, ...messages.devices];
                     const uniqueList = updatedList.filter((device, index, self) =>
                         index === self.findIndex((d) => d.deviceid === device.deviceid)

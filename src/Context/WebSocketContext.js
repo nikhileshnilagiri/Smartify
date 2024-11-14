@@ -21,10 +21,9 @@ export const WebSocketProvider = ({ children }) => {
 
         socket.onmessage = (event) => {
             try {
-                // Parse the incoming JSON string
                 const message = JSON.parse(event.data);
                 console.log("Received message from WebSocket:", message);
-                setMessages(message); // Now messages is an object
+                setMessages(message);
             } catch (error) {
                 console.error("Error parsing WebSocket message:", error);
             }
@@ -50,7 +49,6 @@ export const WebSocketProvider = ({ children }) => {
         };
     }, []);
 
-    // Function to send a message to the WebSocket server
     const sendMessage = (message) => {
         if (ws && isConnected) {
             ws.send(message);

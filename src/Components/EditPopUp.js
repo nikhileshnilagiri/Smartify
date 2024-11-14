@@ -1,48 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import { useUser } from "../Context/UserContext";
 
 function UpdateDevicePopUp(props) {
-    const { user, updateDevice } = useUser();  // Assuming `updateDevice` is a function from context to update the user state
+    const { user, updateDevice } = useUser();
 
-    // The state will hold the current device data that is being edited
     const [deviceData, setDeviceData] = useState({
-        deviceid: "",
+        deviceid:props.did,
         devicename: "",
         location: "",
         devicetype: "Light",
-        status: false,
     });
 
-    // When the popup is opened, set the device data
-    useEffect(() => {
-        if (props.device) {
-            setDeviceData({
-                deviceid: props.device.deviceid,
-                devicename: props.device.devicename,
-                location: props.device.location,
-                devicetype: props.device.devicetype,
-                status: props.device.status,
-            });
-        }
-    }, [props.device]);
-
-    // Handle saving the updated device info
     const handleSave = async (e) => {
         e.preventDefault();
+        console.log(deviceData)
         try {
             const response = await fetch('http://localhost:8080/updatedevice', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: user.email,
-                    deviceid: deviceData.deviceid,
-                    updatedData: deviceData,
+                    deviceData: deviceData,
                 }),
             });
             if (response.ok) {
-                // Update the device in the context state
-                updateDevice(deviceData);
+                updateDevice(deviceData.deviceid,deviceData)
             }
         } catch (error) {
             console.error("Error updating device:", error);
@@ -103,21 +86,6 @@ function UpdateDevicePopUp(props) {
                             <option value="Light">Light</option>
                             <option value="Air Conditioner">Air Conditioner</option>
                             <option value="Fan">Fan</option>
-                        </select>
-                    </div>
-
-                    <div className="mb-3">
-                        <label htmlFor="deviceStatus" className="form-label">
-                            Device Status
-                        </label>
-                        <select
-                            id="deviceStatus"
-                            className="form-select"
-                            value={deviceData.status ? "On" : "Off"}
-                            onChange={(e) => setDeviceData({ ...deviceData, status: e.target.value === "On" })}
-                        >
-                            <option value="On">On</option>
-                            <option value="Off">Off</option>
                         </select>
                     </div>
                 </form>
