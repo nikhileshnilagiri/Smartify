@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 
 
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,7 +26,7 @@ mongoose.connect('mongodb://localhost:27017/Database2')
     .catch(err => console.error("MongoDB connection error:", err));
 
 const DeviceSchema = new mongoose.Schema({
-    deviceid: {type:String, required: true,unique:true},
+    deviceid: {type:String, required: true},
     devicename: { type: String, required: true },
     location: { type: String, required: true },
     devicetype: { type: String, required: true },
@@ -232,6 +233,14 @@ wss.on('connection', (ws) => {
             wss.clients.forEach(client => {
                 if(client.readyState === WebSocket.OPEN) {
                     client.send(JSON.stringify({type: 'AC_CONTROL',deviceid:parsedMessage.deviceid}));
+                }
+            })
+        }
+        else if (parsedMessage.type === 'DEVICE_STATUS'){
+            console.log('Brodcasting Status to all Clients');
+            wss.clients.forEach(client => {
+                if(client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({type:"DEVICE_STATUS",deviceid:parsedMessage.deviceid,status:true}));
                 }
             })
         }

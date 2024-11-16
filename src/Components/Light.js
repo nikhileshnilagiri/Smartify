@@ -8,7 +8,7 @@ function Light(props) {
 
     useEffect(() => {
         if (messages) {
-            if (messages.type === "DEVICE_STATUS" && messages.deviceId === props.id) {
+            if (messages.type === "DEVICE_STATUS" && messages.deviceid === props.id) {
                 setIsOn(messages.status);
             }
         }
