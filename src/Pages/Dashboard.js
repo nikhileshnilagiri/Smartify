@@ -7,11 +7,12 @@ import AC from "../Components/AC";
 import { useUser } from "../Context/UserContext";
 import CustomTabPanel from '../Components/CustomTab';
 import { useWebSocket } from "../Context/WebSocketContext";
+import Temperature from "../Components/Temperature";
 
 function Dashboard() {
   const [value, setValue] = useState(0);
   const { user } = useUser();
-  const {sendMessage} = useWebSocket();
+  const { sendMessage } = useWebSocket();
   const [isListening, setIsListening] = useState(false);
   const [command, setCommand] = useState("");
 
@@ -28,11 +29,11 @@ function Dashboard() {
       recognition.onresult = (event) => {
         const transcript = event.results[event.resultIndex][0].transcript;
         setCommand(transcript);
-        if(transcript=="lights on"){
+        if (transcript === "lights on") {
           sendMessage(JSON.stringify({
             type: "DEVICE_CONTROL",
             deviceid: "ESP32_Device-01",
-        }));
+          }));
         }
       };
     }
@@ -71,17 +72,9 @@ function Dashboard() {
       <section>
         <div>
           <div className="row mt-4">
-            <div className="col-12 col-md-4 mb-3">
-              <div className="card border-0 shadow h-100">
-                <div className="card-body">
-                  <h5 className="card-title">Temperature</h5>
-                  <h2 className="card-text">22°C</h2>
-                  <p className="card-text">Normal range</p>
-                </div>
-              </div>
-            </div>
+            <Temperature/>
 
-            {/* Humidity Card */}
+
             <div className="col-12 col-md-4 mb-3">
               <div className="card border-0 shadow h-100">
                 <div className="card-body">
@@ -92,26 +85,23 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* New Voice Command Card */}
             <div className="col-12 col-md-4 mb-3">
               <div className="card border-0 shadow h-100">
                 <div className="card-body">
                   <h5 className="card-title text-center mb-3">Voice Control</h5>
 
-                  {/* Flex container for button and text side by side */}
                   <div className="d-flex justify-content-center align-items-center mt-1">
-
                     <button
                       onClick={toggleListening}
                       style={{
                         height: '60px',
                         width: '60px',
                         borderRadius: '50%',
-                        border:0
+                        border: 0
                       }}
                     >
                       <Mic fontSize="large"></Mic>
-                      
+
                     </button>
                     <div className="ms-3">
                       <p className="mb-2">
