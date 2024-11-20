@@ -6,6 +6,7 @@ import PopUp from "../Components/AddPopUp";
 import { useUser } from "../Context/UserContext";
 import Device from "../Components/Device";
 import CustomTabPanel from "../Components/CustomTab";
+import { Add } from "@mui/icons-material";
 
 export default function DeviceManager() {
   const { user } = useUser();
@@ -59,9 +60,10 @@ export default function DeviceManager() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ borderRadius: "50px" }}
               />
-              <button className="btn btn-primary" onClick={handleAddDevice}>
-                <AddCircleOutlineIcon className="mr-2" fontSize="small" />
-                Add Device
+              <button className="d-flex gap-1 justify-content-between btn " style={{borderRadius:"40px",backgroundColor:"#B6FFA1"}} onClick={handleAddDevice}>
+                <div><Add fontSize="small"/></div>
+                <div>
+                Add</div>
               </button>
             </div>
             

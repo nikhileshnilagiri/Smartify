@@ -1,58 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Tabs, Tab, Box, IconButton } from '@mui/material';
-import { Mic, Notifications } from '@mui/icons-material';
+import {Notifications } from '@mui/icons-material';
 import Light from "../Components/Light";
 import Fan from "../Components/Fan";
 import AC from "../Components/AC";
-import { useUser } from "../Context/UserContext";
 import CustomTabPanel from '../Components/CustomTab';
-import { useWebSocket } from "../Context/WebSocketContext";
 import Temperature from "../Components/Temperature";
+import Humidity from "../Components/Humidity";
+import Voice from "../Components/Voice";
+import { useUser } from "../Context/UserContext";
 
 function Dashboard() {
   const [value, setValue] = useState(0);
   const { user } = useUser();
-  const { sendMessage } = useWebSocket();
-  const [isListening, setIsListening] = useState(false);
-  const [command, setCommand] = useState("");
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-
-  useEffect(() => {
-    if (recognition) {
-      recognition.continuous = false;
-      recognition.lang = "en-US";
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onresult = (event) => {
-        const transcript = event.results[event.resultIndex][0].transcript;
-        setCommand(transcript);
-        if (transcript === "lights on") {
-          sendMessage(JSON.stringify({
-            type: "DEVICE_CONTROL",
-            deviceid: "ESP32_Device-01",
-          }));
-        }
-      };
-    }
-  }, [recognition]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-  };
-
-  const toggleListening = () => {
-    if (isListening) {
-      recognition.stop();
-    } else {
-      recognition.start();
-
-      setTimeout(() => {
-        recognition.stop();
-      }, 5000);
-    }
   };
 
   return (
@@ -60,7 +23,7 @@ function Dashboard() {
       <section>
         <div className="d-flex justify-content-between mb-3">
           <div>
-            <h2>Hello, {user.username}!</h2>
+            <h2 className="fw-bold">Hello, {user.username}!</h2>
             <p>Welcome back to your home</p>
           </div>
           <IconButton size="medium" sx={{ borderRadius: "500px" }}>
@@ -73,48 +36,8 @@ function Dashboard() {
         <div>
           <div className="row mt-4">
             <Temperature/>
-
-
-            <div className="col-12 col-md-4 mb-3">
-              <div className="card border-0 shadow h-100">
-                <div className="card-body">
-                  <h5 className="card-title">Humidity</h5>
-                  <h2 className="card-text">45%</h2>
-                  <p className="card-text">Optimal level</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-12 col-md-4 mb-3">
-              <div className="card border-0 shadow h-100">
-                <div className="card-body">
-                  <h5 className="card-title text-center mb-3">Voice Control</h5>
-
-                  <div className="d-flex justify-content-center align-items-center mt-1">
-                    <button
-                      onClick={toggleListening}
-                      style={{
-                        height: '60px',
-                        width: '60px',
-                        borderRadius: '50%',
-                        border: 0
-                      }}
-                    >
-                      <Mic fontSize="large"></Mic>
-
-                    </button>
-                    <div className="ms-3">
-                      <p className="mb-2">
-                        {isListening ? "Listening..." : "Start Listening"}
-                      </p>
-                      <p className="mb-0">
-                        {command ? `You said: "${command}"` : "Say a command..."}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Humidity/>
+            <Voice/>
           </div>
         </div>
       </section>
