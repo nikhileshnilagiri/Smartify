@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
 import Switch from '@mui/material/Switch';
 import { useWebSocket } from "../Context/WebSocketContext";
+import { useUser } from "../Context/UserContext";
 
 function Light(props) {
     const [isOn, setIsOn] = useState(false);
     const { messages, sendMessage } = useWebSocket();
+    const {logActivity} = useUser();
 
     useEffect(() => {
         if (messages) {
-            if (messages.type === "DEVICE_STATUS" && messages.deviceid === props.id) {
-                setIsOn(messages.status);
+            if (messages.type === "DEVICE_STATUS" && messages.deviceid === props.id && messages.controltype==="LIGHT") {
+                const value = (messages.status==="true");
+                setIsOn(value);
+                const action = `${props.name} turned ${value ? "on" : "off"}`;
+                const timestamp = new Date().toISOString();
+                logActivity({ action,timestamp });
             }
         }
-    }, [messages, props.id]);
+    }, [messages, props.id, props.name]);
 
     const handleSwitch = (e) => {
         const state = e.target.checked;

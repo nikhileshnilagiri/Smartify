@@ -5,7 +5,7 @@ import { useWebSocket } from "../Context/WebSocketContext";
 
 function PopUp(props) {
     const { user, newDevice, newRoom } = useUser();
-    const { messages } = useWebSocket();  // Assuming you have access to messages from WebSocket
+    const { messages } = useWebSocket();
 
     const [activeStep, setActiveStep] = useState("Start");
     const [room, setRoom] = useState({ name: "" });
@@ -54,6 +54,7 @@ function PopUp(props) {
                 });
                 if (response.ok) {
                     newDevice(devicedata);
+                    props.onCancel();
                 }
             } catch (error) {
                 console.log(error);
@@ -67,6 +68,7 @@ function PopUp(props) {
                 });
                 if (response.ok) {
                     newRoom(room);
+                    props.onCancel();
                 }
             } catch (error) {
                 console.log(error);

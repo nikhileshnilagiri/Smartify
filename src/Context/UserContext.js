@@ -9,7 +9,15 @@ export const UserProvider = ({ children }) => {
     password: '',
     rooms: [],
     devices: [],
+    activitylog: []
   });
+
+  const logActivity = (action) =>{
+    setUser((prev)=>({
+      ...prev,
+      activitylog:[...prev.activitylog,action]
+    }));
+  }
 
   const logout = () => setUser(null);
 
@@ -44,7 +52,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, newDevice, newRoom, removeDevice, updateDevice }}>
+    <UserContext.Provider value={{ user, setUser, logout, newDevice, newRoom, removeDevice, updateDevice, logActivity}}>
       {children}
     </UserContext.Provider>
   );

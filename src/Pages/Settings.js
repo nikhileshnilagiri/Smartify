@@ -1,15 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import { TextField, MenuItem, Select, InputLabel, FormControl, Button } from '@mui/material';
 import { useUser } from "../Context/UserContext";
+import { toast,Slide, ToastContainer } from 'react-toastify';
 
 function Settings() {
   const { user } = useUser();
+  const [passDetails, setpassDetails] = useState({ current: "", newpass: "", confi: "" });
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      if (passDetails.newpass === passDetails.confi && user.password === passDetails.current) {
+        const response = await fetch('http://localhost:8080/changepassword', {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email, password: user.password, newpass: passDetails.newpass })
+        });
+        if (response.ok) {
+          toast.success("Password Changed Successfully!", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            transition:Slide
+          });
+          setpassDetails({ current: "", newpass: "", confi: "" });
+        } else {
+          toast.error("Failed to update password. Please try again.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+          });
+        }
+      } else {
+        toast.error("Invalid password or mismatch.", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          transition:Slide
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occurred. Please try again.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        transition:Slide
+      });
+    }
+  };
 
   return (
-    <div>
-      <div className="container mt-4">
+    <main>
+      <div className="container mt-4 pt-5">
+        <ToastContainer />
         <div className="row">
           <div className="col-12 mb-3">
             <div className="card border-0 shadow">
@@ -25,7 +71,6 @@ function Settings() {
             </div>
           </div>
         </div>
-
         <div className="row">
           <div className="col-md-6 mb-3">
             <div className="card border-0 shadow">
@@ -40,7 +85,8 @@ function Settings() {
                       required
                       variant="outlined"
                       id="currentPassword"
-                    />
+                      value={passDetails.current}
+                      onChange={(e) => setpassDetails((prev) => ({ ...prev, current: e.target.value }))} />
                   </div>
                   <div className="mb-3">
                     <TextField
@@ -50,7 +96,8 @@ function Settings() {
                       required
                       variant="outlined"
                       id="newPassword"
-                    />
+                      value={passDetails.newpass}
+                      onChange={(e) => setpassDetails((prev) => ({ ...prev, newpass: e.target.value }))} />
                   </div>
                   <div className="mb-3">
                     <TextField
@@ -60,16 +107,16 @@ function Settings() {
                       required
                       variant="outlined"
                       id="confirmPassword"
-                    />
+                      value={passDetails.confi}
+                      onChange={(e) => setpassDetails((prev) => ({ ...prev, confi: e.target.value }))} />
                   </div>
-                  <Button type="submit" variant="contained" style={{backgroundColor:"black"}}>
+                  <Button variant="contained" style={{ backgroundColor: "black" }} onClick={handleUpdate}>
                     Update Password
                   </Button>
                 </form>
               </div>
             </div>
           </div>
-
           <div className="col-md-6 mb-3">
             <div className="card border-0 shadow">
               <div className="card-body">
@@ -81,8 +128,7 @@ function Settings() {
                       <Select
                         labelId="notification-label"
                         id="notification"
-                        label="Notifications"
-                      >
+                        label="Notifications">
                         <MenuItem value="enabled">Enabled</MenuItem>
                         <MenuItem value="disabled">Disabled</MenuItem>
                       </Select>
@@ -94,14 +140,13 @@ function Settings() {
                       <Select
                         labelId="theme-label"
                         id="theme"
-                        label="Theme"
-                      >
+                        label="Theme">
                         <MenuItem value="light">Light</MenuItem>
                         <MenuItem value="dark">Dark</MenuItem>
                       </Select>
                     </FormControl>
                   </div>
-                  <Button type="submit" variant="contained" style={{backgroundColor:"black"}}>
+                  <Button type="submit" variant="contained" style={{ backgroundColor: "black" }}>
                     Save Changes
                   </Button>
                 </form>
@@ -110,7 +155,7 @@ function Settings() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch } from "@mui/material";
 import { Add, Remove } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import { useWebSocket } from "../Context/WebSocketContext";
+import { useUser } from "../Context/UserContext";
 
 
 function Fan(props) {
 
-    const {sendMessage} = useWebSocket();
+    const {sendMessage,messages} = useWebSocket();
     const [isOn, setIsOn] = useState(false);
     const [fanSpeed] = useState(1);
+    const {logActivity} = useUser();
+
+    useEffect(()=>{
+        if(messages){
+            if(messages.type === 'DEVICE_STATUS' && messages.deviceid === props.id){
+                setIsOn(messages.status);
+                const action = `${props.name} turned ${messages.status ? "on" : "off"}`;
+                const timestamp = new Date().toUTCString();
+                logActivity({ action,timestamp });
+            }
+        }
+    },[messages, props.id, props.name])
 
     const handleSwitch = (e) => {
         const state = e.target.checked;

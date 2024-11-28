@@ -1,25 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 function Temperature() {
+
+    const [temp,setTemp] = useState();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/temperature', {
+                    method: "GET"
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setTemp(data.temp);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+    
+        fetchData();
+    }, []);
+
     return (
         <div className="col-12 col-md-4 mb-3 d-flex align-items-stretch">
-            <div className="d-flex align-items-center justify-content-center gap-3 rounded-3 bg-primary p-3 text-white w-100 h-100">
-                {/* Weather Icon Section */}
-                    <img
-                        src={require("../Assets/cloudy.png")}
-                        alt="Weather Icon"
-                        className="w-25 mb-1"
-                    />
-
-
-                {/* Vertical Divider */}
-                <div className="border border-light" style={{ height: '100px', width: '1px' }} />
-
-                {/* Temperature Section */}
-                <div className="d-flex flex-column align-items-start">
-                    <span className="text-sm">Temperature</span>
-                    <span className="fs-1 fw-bold">22°C</span>
-                    <span className="text-sm">Cloudy</span>
+            <div className="card shadow bg-primary w-100">
+                <div className="d-flex align-items-center justify-content-center gap-3 rounded-3 p-3 text-white">
+                        <img
+                            src={require("../Assets/Warm.png")}
+                            alt="Weather Icon"
+                            className="mb-1"
+                            style={{width:"90px",height:"90px"}}
+                            
+                        />
+                    <div className="border border-light" style={{ height: '100px', width: '1px' }} />
+                    <div className="d-flex flex-column align-items-start">
+                        <span className="text-sm">Temperature</span>
+                        <span className="fs-1 fw-bold">{temp}°C</span>
+                        <span className="text-sm">Warm</span>
+                    </div>
                 </div>
             </div>
         </div>

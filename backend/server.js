@@ -5,7 +5,6 @@ const WebSocket = require('ws');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -34,15 +33,58 @@ const RoomSchema = new mongoose.Schema({
     name: { type: String, required: true }
 });
 
+const ActivitySchema = new mongoose.Schema({
+    action:{type: String, required:true},
+    timestamp:{type:Date,default:Date.now}
+})
+
 const UserSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     rooms: [RoomSchema],
     devices: [DeviceSchema],
+    activitylog:[ActivitySchema]
 });
 
 const UserDetails = mongoose.model("UserDetails", UserSchema);
+
+app.get("/temperature", async (req, res) => {
+    try {
+        const response = await fetch("http://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=1502e8f9ae85a5e3111be130792f5e5b", {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            return res.status(response.status).json({ error: "Failed to fetch data from OpenWeather API", details: await response.json() });
+        }
+        const data = await response.json();
+        const temperatureInKelvin = data.main.temp;
+        const temperatureInCelsius = temperatureInKelvin - 273.15;
+        const temp = Math.round(temperatureInCelsius);
+        res.status(200).json({temp:temp});
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.get("/humidity", async (req, res) => {
+    try {
+        const response = await fetch("http://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=1502e8f9ae85a5e3111be130792f5e5b", {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            return res.status(response.status).json({ error: "Failed to fetch data from OpenWeather API", details: await response.json() });
+        }
+        const data = await response.json();
+        res.status(200).json({humidity:data.main.humidity});
+    } catch (error) {
+        console.error("Error fetching weather data:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 app.post("/signup", async (req, res) => {
     const { username, email, password } = req.body;
@@ -158,6 +200,27 @@ app.post('/updatedevice', async (req, res) => {
     }
 });
 
+app.post('/changepassword', async (req, res) => {
+    const { email, password, newpass } = req.body;
+
+    try {
+        const result = await UserDetails.updateOne(
+            { email, password },
+            { $set: { password: newpass } }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(400).json({ error: 'Invalid email or password' });
+        }
+
+        res.status(200).json({ message: 'Password updated successfully' });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 
 wss.on('connection', (ws) => {
@@ -238,14 +301,13 @@ wss.on('connection', (ws) => {
             console.log('Brodcasting Status to all Clients');
             wss.clients.forEach(client => {
                 if(client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({type:"DEVICE_STATUS",deviceid:parsedMessage.deviceid,status:true}));
+                    client.send(JSON.stringify({type:"DEVICE_STATUS",controltype:parsedMessage.controltype,deviceid:parsedMessage.deviceid,status:parsedMessage.status}));
                 }
             })
         }
 
 
     });
-
 
     ws.on('close', () => {
         console.log('WebSocket connection closed');

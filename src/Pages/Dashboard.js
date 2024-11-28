@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Tabs, Tab, Box, IconButton } from '@mui/material';
-import {Notifications } from '@mui/icons-material';
+import { Tabs, Tab, Box} from '@mui/material';
 import Light from "../Components/Light";
 import Fan from "../Components/Fan";
 import AC from "../Components/AC";
 import CustomTabPanel from '../Components/CustomTab';
 import Temperature from "../Components/Temperature";
 import Humidity from "../Components/Humidity";
-import Voice from "../Components/Voice";
 import { useUser } from "../Context/UserContext";
+import RecentActivity from "../Components/RecentActivity"
+import QuickActions from "../Components/QuickActions";
+import EnergyWidget from "../Components/EnergyWidget";
+import Footer from "../Components/Footer";
 
 function Dashboard() {
   const [value, setValue] = useState(0);
@@ -19,16 +21,14 @@ function Dashboard() {
   };
 
   return (
-    <div className="container mt-4">
+    <main>
+    <div className="container mt-4 pt-5">
       <section>
         <div className="d-flex justify-content-between mb-3">
           <div>
-            <h2 className="fw-bold">Hello, {user.username}!</h2>
+            <h2 className="fw">Hello, {user.username}!</h2>
             <p>Welcome back to your home</p>
           </div>
-          <IconButton size="medium" sx={{ borderRadius: "500px" }}>
-            <Notifications />
-          </IconButton>
         </div>
       </section>
 
@@ -37,7 +37,7 @@ function Dashboard() {
           <div className="row mt-4">
             <Temperature/>
             <Humidity/>
-            <Voice/>
+            <EnergyWidget/>
           </div>
         </div>
       </section>
@@ -115,33 +115,10 @@ function Dashboard() {
           </div>
         </div>
       </section>
-
-      <section>
-        <div className="row">
-          <div className="col-12 mb-3">
-            <div className="card border-0 shadow">
-              <div className="card-body">
-                <h5>Quick Actions</h5>
-                <div className="d-flex justify-content-between mt-3">
-                  <button className="btn btn-dark w-25 d-flex align-items-center justify-content-center me-2" style={{ height: '80px' }}>
-                    All Off
-                  </button>
-                  <button className="btn btn-dark w-25 d-flex align-items-center justify-content-center me-2" style={{ height: '80px' }}>
-                    Lights Off
-                  </button>
-                  <button className="btn btn-dark w-25 d-flex align-items-center justify-content-center me-2" style={{ height: '80px' }}>
-                    Lock All
-                  </button>
-                  <button className="btn btn-dark w-25 d-flex align-items-center justify-content-center" style={{ height: '80px' }}>
-                    Unlock All
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <RecentActivity/>
+      <QuickActions/>
     </div>
+    <Footer/></main>
   );
 }
 

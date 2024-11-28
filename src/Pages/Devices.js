@@ -22,7 +22,7 @@ export default function DeviceManager() {
   };
 
   return (
-    <main className="container mt-4">
+    <main className="container mt-4 pt-5">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold mb-4">Device Management</h2>
 

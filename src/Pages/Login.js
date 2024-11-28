@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button, TextField, Checkbox, FormControlLabel, Typography, Divider } from '@mui/material';
-import { Google } from '@mui/icons-material';
+import { Button, TextField, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../Context/UserContext';
+import { toast,Slide,ToastContainer } from 'react-toastify';
 
 
 function Login() {
@@ -26,7 +26,13 @@ function Login() {
         setUser(userdata);
         navigate("/dashboard");
       } else {
-        alert("Login Falied,Invalid Credentials")
+        toast.error('Invalid Credentials!', {
+          position: "top-center",
+          autoClose: 3000,
+          theme: "colored",
+          transition: Slide
+        });
+        
       }
     } catch (error) {
       console.log(error);
@@ -35,6 +41,7 @@ function Login() {
 
   return (
     <section className="vh-100">
+      <ToastContainer />
       <div className="container py-5 h-100">
         <div className="row d-flex align-items-center justify-content-center h-100">
           <div className="col-md-8 col-lg-7 col-xl-6">
@@ -77,9 +84,7 @@ function Login() {
                   control={<Checkbox defaultChecked />}
                   label="Remember me"
                 />
-                <a href="#!" className="text-muted">
                   Forgot password?
-                </a>
               </div>
 
               <Button
@@ -90,21 +95,10 @@ function Login() {
                 size="large"
                 className="mb-3"
               >
-                Sign in
+                Login
               </Button>
 
-              <Divider className="my-4" />
-
-              <Button
-                variant="outlined"
-                color="error"
-                fullWidth
-                size="large"
-                startIcon={<Google />}
-                href="#!"
-              >
-                Continue with Google
-              </Button>
+              <hr/>
             </form>
             <Typography variant="body2" align="center" color="black" className="mt-3">
               Don't have an account?{' '}

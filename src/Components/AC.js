@@ -3,8 +3,6 @@ import { Remove, Add, PowerSettingsNew} from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import { useWebSocket } from "../Context/WebSocketContext";
 
-
-
 function AC(props) {
     const [temperature, setTemperature] = useState(22);
     const [powerOn, setPowerOn] = useState(false);
@@ -17,6 +15,7 @@ function AC(props) {
             deviceid: props.id,
         }));
     }
+
 
     return (
         <div className="col-12 col-sm-6 col-md-3 mb-3 d-flex align-items-stretch">

@@ -109,7 +109,7 @@ function Signup() {
 
             <Typography variant="body2" align="center" color="black" className="mt-2">
               Already have an account?{' '}
-              <span style={{ color: 'blue' }} onClick={handleLogin}>
+              <span style={{ color: 'blue', cursor:'pointer'}} onClick={handleLogin}>
                 Login
               </span>
             </Typography>
