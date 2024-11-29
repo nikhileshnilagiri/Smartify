@@ -1,41 +1,42 @@
+const bonjour = require('bonjour');
 const express = require('express');
 const http = require('http');
-const WebSocket = require('ws');
+const WebSocket = require('ws');  // Import WebSocket library
 
 const app = express();
 const server = http.createServer(app);
 
+// Create WebSocket server
 const wss = new WebSocket.Server({ server });
 
+// WebSocket connection handler
 wss.on('connection', (ws) => {
-    console.log('Client connected');
-    ws.send('Welcome to the WebSocket server!');
+  console.log('WebSocket client connected');
 
-    const cleanDeviceList = device.map(dev => ({
-        deviceid: dev.deviceid,
-        status: dev.status
-    }));
+  // Handle incoming messages
+  ws.on('message', (message) => {
+    console.log('Received message:', message);
+  });
 
-    const deviceListMessage = JSON.stringify({ type: 'DEVICE_LIST', devices: cleanDeviceList });
-    ws.send(deviceListMessage);
-
-    ws.on('message', (message) => {
-        console.log(`Received message from client: ${message}`);
-        if (parsedMessage.type === 'DEVICE_CONTROL') {
-            console.log('Broadcasting TURN_ON message to all clients');
-            wss.clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({type:'DEVICE_CONTROL',deviceid:parsedMessage.deviceid}));
-                }
-            });
-        } 
-    });
-
-    ws.on('close', () => {
-        console.log('WebSocket connection closed');
-    });
+  // Send a message to the client
+  ws.send('Hello, client!');
 });
 
-server.listen(8080, () => {
-    console.log('Server is running on http://localhost:8080');
+// Publish the service using Bonjour
+const bonjourInstance = bonjour();
+bonjourInstance.publish({ name: 'My Web Server', type: 'http', port: 8000});
+
+// Serve a basic HTTP page
+app.get('/', (req, res) => {
+  res.send('Welcome to My Web Server!');
+});
+
+// Start the HTTP server
+server.listen(8000, () => {
+  console.log('Server is running on port 8000');
+});
+
+// Discover and log HTTP services
+bonjourInstance.find({ type: 'http' }, (service) => {
+  console.log('Found an HTTP server:', service);
 });
