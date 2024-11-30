@@ -4,6 +4,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -18,7 +19,7 @@ app.get('/', (req, res) => {
   res.send('<h1>Welcome to the HTTP Server with Express!</h1>');
 });
 
-mongoose.connect('mongodb://localhost:27017/Database2')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("MongoDB Connected"))
     .catch(err => console.error("MongoDB connection error:", err));
 
@@ -51,7 +52,7 @@ const UserDetails = mongoose.model("UserDetails", UserSchema);
 
 app.get("/temperature", async (req, res) => {
     try {
-        const response = await fetch("http://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=1502e8f9ae85a5e3111be130792f5e5b", {
+        const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=${process.env.API_KEY}`, {
             method: "GET",
         });
 
@@ -71,7 +72,7 @@ app.get("/temperature", async (req, res) => {
 
 app.get("/humidity", async (req, res) => {
     try {
-        const response = await fetch("http://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=1502e8f9ae85a5e3111be130792f5e5b", {
+        const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=Hyderabad&appid=${process.env.API_KEY}`, {
             method: "GET",
         });
 
@@ -328,6 +329,6 @@ wss.on('connection', (ws) => {
     });
 });
 
-server.listen(8080, () => {
-    console.log('Server is running on http://localhost:8080');
+server.listen(process.env.PORT, () => {
+    console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });

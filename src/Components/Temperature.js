@@ -7,7 +7,7 @@ function Temperature() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8080/temperature', {
+                const response = await fetch(`${process.env.REACT_APP_URL}/temperature`, {
                     method: "GET"
                 });
                 if (response.ok) {

@@ -12,7 +12,7 @@ export const WebSocketProvider = ({ children }) => {
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socket = new WebSocket('ws://localhost:8080');
+        const socket = new WebSocket(process.env.REACT_APP_WS);
 
         socket.onopen = () => {
             console.log("WebSocket connected!");

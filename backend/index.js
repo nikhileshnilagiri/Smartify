@@ -24,7 +24,7 @@ wss.on('connection', (ws) => {
 
 // Publish the service using Bonjour
 const bonjourInstance = bonjour();
-bonjourInstance.publish({ name: 'My Web Server', type: 'http', port: 8000});
+bonjourInstance.publish({ name: 'My Web Server', type: 'http', port: 8000, host:'backend.local'});
 
 // Serve a basic HTTP page
 app.get('/', (req, res) => {

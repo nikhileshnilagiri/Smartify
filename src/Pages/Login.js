@@ -6,7 +6,6 @@ import { toast,Slide,ToastContainer } from 'react-toastify';
 
 
 function Login() {
-
   const [data, setdata] = useState({ email: '', password: '' });
   const navigate = useNavigate();
   const { setUser } = useUser();
@@ -16,7 +15,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/login", {
+      const response = await fetch(`${process.env.REACT_APP_URL}/login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

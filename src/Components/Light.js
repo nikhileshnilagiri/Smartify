@@ -8,6 +8,7 @@ function Light(props) {
     const { messages, sendMessage } = useWebSocket();
     const {logActivity} = useUser();
 
+    
     useEffect(() => {
         if (messages) {
             if (messages.type === "DEVICE_STATUS" && messages.deviceid === props.id && messages.controltype==="LIGHT") {

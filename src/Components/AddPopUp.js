@@ -47,7 +47,7 @@ function PopUp(props) {
         e.preventDefault();
         if (activeStep === "Device") {
             try {
-                const response = await fetch('http://localhost:8080/newdevice', {
+                const response = await fetch(`${process.env.REACT_APP_URL}/newdevice`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: user.email, devicedata: devicedata })
@@ -61,7 +61,7 @@ function PopUp(props) {
             }
         } else if (activeStep === "Room") {
             try {
-                const response = await fetch('http://localhost:8080/newroom', {
+                const response = await fetch(`${process.env.REACT_APP_URL}/newroom`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: user.email, room: room })

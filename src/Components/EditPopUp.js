@@ -16,7 +16,7 @@ function UpdateDevicePopUp(props) {
         e.preventDefault();
         console.log(deviceData)
         try {
-            const response = await fetch('http://localhost:8080/updatedevice', {
+            const response = await fetch(`${process.env.REACT_APP_URL}/updatedevice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

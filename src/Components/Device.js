@@ -23,13 +23,12 @@ function Device(props) {
     const handleDelete = async () => {
         const data = { email: user.email, device: props.id };
         try {
-            const response = await fetch('http://localhost:8080/deletedevice', {
+            const response = await fetch(`${process.env.REACT_APP_URL}/deletedevice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
             if (response.ok) {
-                // Remove the device from the state/context
                 removeDevice(props.id);
             } else {
                 console.error("Failed to delete device:", response.statusText);

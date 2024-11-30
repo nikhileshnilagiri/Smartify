@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, TextField, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { toast ,ToastContainer,Slide } from 'react-toastify';
 
 
 
@@ -14,16 +15,26 @@ function Signup() {
     const handleSignUp = async (e) =>{
       e.preventDefault();
       try {
-        const response = await fetch('http://localhost:8080/signup',{
+        const response = await fetch(`${process.env.REACT_APP_URL}/signup`,{
           method:'POST',
           headers: { 'Content-Type':'application/json'},
           body:JSON.stringify(data)
         })
         if(response.ok){
           navigate('/');
-          alert('SignUp Successfull');
+          toast.success('SignUp Success', {
+            position: "top-center",
+            autoClose: 3000,
+            theme: "colored",
+            transition: Slide
+          });
         }else{
-          alert('SignUp Failed')
+          toast.error('SignUp Failed', {
+            position: "top-center",
+            autoClose: 3000,
+            theme: "colored",
+            transition: Slide
+          });
         }
       } catch (error) {
         console.log(error);
@@ -32,6 +43,7 @@ function Signup() {
 
   return (
     <section className="vh-100">
+      <ToastContainer/>
       <div className="container py-5 h-100">
         <div className="row d-flex align-items-center justify-content-center h-100">
           <div className="col-md-8 col-lg-7 col-xl-6">

@@ -13,7 +13,7 @@ function Settings() {
     e.preventDefault();
     try {
       if (passDetails.newpass === passDetails.confi && user.password === passDetails.current) {
-        const response = await fetch('http://localhost:8080/changepassword', {
+        const response = await fetch(`${process.env.REACT_APP_URL}/changepassword`, {
           method: 'POST',
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: user.email, password: user.password, newpass: passDetails.newpass })
