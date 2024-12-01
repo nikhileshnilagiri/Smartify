@@ -1,25 +1,62 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({
+  const loadUserData = () => {
+    const savedUserData = Cookies.get('user');
+    const savedToken = Cookies.get('authToken');
+    
+    if (savedUserData && savedToken) {
+      try {
+        return { ...JSON.parse(savedUserData), authToken: savedToken };
+      } catch (e) {
+        Cookies.remove('user');
+        Cookies.remove('authToken');
+        return getDefaultUser();
+      }
+    }
+    return getDefaultUser();
+  };
+
+  const getDefaultUser = () => ({
     username: '',
     email: '',
     password: '',
     rooms: [],
     devices: [],
-    activitylog: []
+    activitylog: [],
   });
 
-  const logActivity = (action) =>{
-    setUser((prev)=>({
-      ...prev,
-      activitylog:[...prev.activitylog,action]
-    }));
-  }
+  const [user, setUser] = useState(loadUserData);
 
-  const logout = () => setUser(null);
+  useEffect(() => {
+    if (user && user.authToken) {
+      Cookies.set('user', JSON.stringify({
+        username: user.username,
+        email: user.email,
+        rooms: user.rooms,
+        devices: user.devices,
+        activitylog: user.activitylog,
+      }), { expires: 7 });
+
+      Cookies.set('authToken', user.authToken, { expires: 7 });
+    }
+  }, [user]);
+
+  const logActivity = (action) => {
+    setUser((prev) => ({
+      ...prev,
+      activitylog: [...prev.activitylog, action],
+    }));
+  };
+
+  const logout = () => {
+    setUser(getDefaultUser());
+    Cookies.remove('user');
+    Cookies.remove('authToken');
+  };
 
   const newDevice = (device) => {
     setUser((prev) => ({
@@ -51,8 +88,14 @@ export const UserProvider = ({ children }) => {
     }));
   };
 
+  const authenticateUser = (token, userData) => {
+    setUser({ ...userData, authToken: token });
+    Cookies.set('authToken', token, { expires: 7 });
+    Cookies.set('user', JSON.stringify(userData), { expires: 7 });
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, logout, newDevice, newRoom, removeDevice, updateDevice, logActivity}}>
+    <UserContext.Provider value={{ user, setUser, authenticateUser, logout, newDevice, newRoom, removeDevice, updateDevice, logActivity }}>
       {children}
     </UserContext.Provider>
   );

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Button, TextField, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../Context/UserContext';
-import { toast,Slide,ToastContainer } from 'react-toastify';
-
+import { toast, Slide, ToastContainer } from 'react-toastify';
+import Cookies from 'js-cookie';
 
 function Login() {
-  const [data, setdata] = useState({ email: '', password: '' });
+  const [data, setData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
   const { setUser } = useUser();
 
@@ -18,25 +18,27 @@ function Login() {
       const response = await fetch(`${process.env.REACT_APP_URL}/login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
+        body: JSON.stringify(data),
+      });
+
       if (response.ok) {
-        const userdata = await response.json();
-        setUser(userdata);
+        const { authtoken, user } = await response.json();
+        Cookies.set('authToken', authtoken, { expires: 7 });
+        Cookies.set('user', JSON.stringify(user), { expires: 7 });
+        setUser(user);
         navigate("/dashboard");
       } else {
         toast.error('Invalid Credentials!', {
           position: "top-center",
           autoClose: 3000,
           theme: "colored",
-          transition: Slide
+          transition: Slide,
         });
-        
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  }
+  };
 
   return (
     <section className="vh-100">
@@ -64,7 +66,7 @@ function Login() {
                 fullWidth
                 margin="normal"
                 placeholder="Enter your email"
-                onChange={(e) => setdata((prevdata) => ({ ...prevdata, email: e.target.value }))}
+                onChange={(e) => setData(prevData => ({ ...prevData, email: e.target.value }))}
               />
 
               <TextField
@@ -74,16 +76,15 @@ function Login() {
                 fullWidth
                 margin="normal"
                 placeholder="Enter your password"
-                onChange={(e) => setdata((prevdata) => ({ ...prevdata, password: e.target.value }))}
+                onChange={(e) => setData(prevData => ({ ...prevData, password: e.target.value }))}
               />
-
 
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <FormControlLabel
                   control={<Checkbox defaultChecked />}
                   label="Remember me"
                 />
-                  Forgot password?
+                Forgot password?
               </div>
 
               <Button

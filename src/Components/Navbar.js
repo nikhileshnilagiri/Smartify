@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Menu, MenuItem, Avatar, ListItemIcon, Divider, IconButton } from '@mui/material';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import { useUser } from '../Context/UserContext';
 
 function NavBar() {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const {logout} = useUser();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -21,8 +23,10 @@ function NavBar() {
   const handleDashboard = () => navigate("/dashboard");
   const handleDevices = () => navigate("/devices");
   const handleSettings = () => navigate("/settings");
-  const handleLogout = () => navigate("/");
-
+  const handleLogout = () => {
+    logout()
+    navigate('/');
+  }
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary text-white px-4 py-2 shadow-sm fixed-top">
       <div className='d-flex gap-2 p-0'>

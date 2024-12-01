@@ -4,6 +4,7 @@ const http = require('http');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const { setToken } = require('./auth');
 require('dotenv').config();
 
 const app = express();
@@ -110,7 +111,17 @@ app.post("/login", async (req, res) => {
         if (user.password !== password) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
-        res.status(200).json(user);
+        const token = setToken({ username: user.username, email: user.email });
+        res.status(200).json({
+            authtoken: token,
+            user: {
+                username: user.username,
+                email: user.email,
+                rooms: user.rooms,
+                devices: user.devices,
+                activitylog: user.activitylog,
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error logging in" });
