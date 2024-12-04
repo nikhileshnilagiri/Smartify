@@ -6,6 +6,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const userRoutes = require('./routes/userRoutes');
+const deviceRoutes = require('./routes/deviceRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -29,6 +33,10 @@ app.post('/modeldata',async (req,res)=>{
     
     res.status(200);
 })
+
+app.use('/',serviceRoutes);
+app.use('/user',userRoutes);
+app.use('/device',deviceRoutes);
 
 
 wss.on('connection', (ws) => {

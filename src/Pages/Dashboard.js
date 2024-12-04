@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Tabs, Tab, Box} from '@mui/material';
 import Light from "../Components/Light";
 import Fan from "../Components/Fan";
@@ -11,18 +11,25 @@ import RecentActivity from "../Components/RecentActivity"
 import QuickActions from "../Components/QuickActions";
 import EnergyWidget from "../Components/EnergyWidget";
 import Footer from "../Components/Footer";
+import '../index.css'
 
 function Dashboard() {
   const [value, setValue] = useState(0);
   const { user } = useUser();
+
+  const [isLoaded,setIsLoaded] = useState(false);
+
+  useEffect(()=>{
+    setIsLoaded(true);
+  },[])
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <main>
-    <div className="container mt-4 pt-5">
+    <main className={`fade-in ${isLoaded ? "visible" : ""}`}>
+    <div className="container mt-4 pt6">
       <section>
         <div className="d-flex justify-content-between mb-3">
           <div>

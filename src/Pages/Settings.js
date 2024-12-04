@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import { TextField, MenuItem, Select, InputLabel, FormControl, Button } from '@mui/material';
 import { useUser } from "../Context/UserContext";
 import { toast,Slide, ToastContainer } from 'react-toastify';
+import Footer from "../Components/Footer";
 
 function Settings() {
   const { user } = useUser();
   const [passDetails, setpassDetails] = useState({ current: "", newpass: "", confi: "" });
+
+  const [isLoaded,setIsLoaded] = useState(false);
+  useEffect(()=>{
+    setIsLoaded(true);
+  },[]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -53,8 +59,8 @@ function Settings() {
   };
 
   return (
-    <main>
-      <div className="container mt-4 pt-5">
+    <main className={`d-flex flex-column min-vh-100 fade-in ${isLoaded?"visible":""}`}>
+      <div className="container mt-4 pt6 flex-grow-1">
         <ToastContainer />
         <div className="row">
           <div className="col-12 mb-3">
@@ -155,6 +161,7 @@ function Settings() {
           </div>
         </div>
       </div>
+      <Footer/>
     </main>
   );
 }

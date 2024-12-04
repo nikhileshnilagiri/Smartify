@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const UserDetails = require('../models/user');
-const { setToken } = require('../auth');
+const {UserDetails} = require('../model/User');
+const { setToken } = require('./auth');
 
 router.post("/signup", async (req, res) => {
     const { username, email, password } = req.body;

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const UserDetails = require('../models/user');
+const UserDetails = require('../model/User');
 
 router.post("/newdevice", async (req, res) => {
     const { email, devicedata } = req.body;
@@ -49,6 +49,7 @@ router.post('/deletedevice', async (req, res) => {
         console.log(error);
         res.status(500).json({ message: "Error deleting device" });
     }
+    
 });
 
 router.post('/updatedevice', async (req, res) => {

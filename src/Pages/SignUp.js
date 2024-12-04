@@ -15,7 +15,7 @@ function Signup() {
     const handleSignUp = async (e) =>{
       e.preventDefault();
       try {
-        const response = await fetch(`${process.env.REACT_APP_URL}/signup`,{
+        const response = await fetch(`${process.env.REACT_APP_URL}/user/signup`,{
           method:'POST',
           headers: { 'Content-Type':'application/json'},
           body:JSON.stringify(data)
@@ -70,7 +70,6 @@ function Signup() {
                 onChange={(e) => setdata((prevdata)=>({...prevdata,username:e.target.value}))}
               />
 
-              
               <TextField
                 label="Your Email"
                 variant="outlined"
@@ -81,7 +80,6 @@ function Signup() {
                 onChange={(e) => setdata((prevdata)=>({...prevdata,email:e.target.value}))}
               />
 
-              
               <TextField
                 label="Password"
                 variant="outlined"

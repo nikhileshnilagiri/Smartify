@@ -5,7 +5,7 @@ const QuickActions = () => {
     <section className="mb-5">
       <h3 className="h5 fw-semibold mb-4">Quick Actions</h3>
       <div className="row">
-        {/* Action 1 - All Lights On */}
+        {/* Action 1 - All Lights On */}      
         <div className="col-6 col-md-3 mb-3">
           <div
             className="card border-0 shadow text-center py-2 d-flex justify-content-center align-items-center"
