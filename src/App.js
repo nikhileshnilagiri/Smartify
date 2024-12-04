@@ -9,7 +9,6 @@ import Settings from "./Pages/Settings";
 import { UserProvider } from "./Context/UserContext";
 import { WebSocketProvider } from './Context/WebSocketContext';
 import Cookies from 'js-cookie';
-import Footer from "./Components/Footer";
 
 const ProtectedRoute = ({ children }) => {
   const token = Cookies.get('authToken');

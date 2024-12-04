@@ -11,7 +11,6 @@ import RecentActivity from "../Components/RecentActivity"
 import QuickActions from "../Components/QuickActions";
 import EnergyWidget from "../Components/EnergyWidget";
 import Footer from "../Components/Footer";
-import '../index.css'
 
 function Dashboard() {
   const [value, setValue] = useState(0);

@@ -15,7 +15,7 @@ function Light(props) {
                 const value = (messages.status==="true");
                 setIsOn(value);
                 const action = `${props.name} turned ${value ? "on" : "off"}`;
-                const timestamp = new Date().toISOString();
+                const timestamp = new Date().toUTCString;
                 logActivity({ action,timestamp });
             }
         }

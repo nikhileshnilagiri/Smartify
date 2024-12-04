@@ -17,8 +17,9 @@ function Fan(props) {
     useEffect(()=>{
         if(messages){
             if(messages.type === 'DEVICE_STATUS' && messages.deviceid === props.id){
-                setIsOn(messages.status);
-                const action = `${props.name} turned ${messages.status ? "on" : "off"}`;
+                const value = (messages.status==="true");
+                setIsOn(value);
+                const action = `${props.name} turned ${value ? "on" : "off"}`;
                 const timestamp = new Date().toUTCString();
                 logActivity({ action,timestamp });
             }
