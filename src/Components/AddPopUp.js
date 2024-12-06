@@ -55,6 +55,7 @@ function PopUp(props) {
                 if (response.ok) {
                     newDevice(devicedata);
                     props.onCancel();
+                    setActiveStep('Start');
                 }
             } catch (error) {
                 console.log(error);
@@ -69,6 +70,7 @@ function PopUp(props) {
                 if (response.ok) {
                     newRoom(room);
                     props.onCancel();
+                    setActiveStep('Start');
                 }
             } catch (error) {
                 console.log(error);

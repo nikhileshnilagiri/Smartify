@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const UserDetails = require('../model/User');
+const {UserDetails} = require('../model/User');
 
 router.post("/newdevice", async (req, res) => {
     const { email, devicedata } = req.body;
     try {
-        const user = await UserDetails.findOne({ email });
+        const user = await UserDetails.findOne({email});
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
