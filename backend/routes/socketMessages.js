@@ -97,11 +97,11 @@ function handleACControl(parsedMessage, wss) {
 
 function handleDeviceStatus(parsedMessage, wss) {
   console.log('Broadcasting Device Status to all clients');
-  broadcastMessage(wss, 'DEVICE_STATUS', parsedMessage.deviceid, parsedMessage.status, parsedMessage.controltype);
+  broadcastMessage(wss, 'DEVICE_STATUS', parsedMessage.deviceid, parsedMessage.status, parsedMessage.Ctype);
 }
 
-function broadcastMessage(wss, type, deviceid, status, controltype) {
-  const message = { type, deviceid, status, controltype };
+function broadcastMessage(wss, type, deviceid, status, Ctype) {
+  const message = { type, deviceid, status, Ctype };
   wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(message));

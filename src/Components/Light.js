@@ -11,7 +11,7 @@ function Light(props) {
     
     useEffect(() => {
         if (messages) {
-            if (messages.type === "DEVICE_STATUS" && messages.deviceid === props.id && messages.controltype==="LIGHT") {
+            if (messages.type === "DEVICE_STATUS" && messages.deviceid === props.id && messages.Ctype==="LIGHT") {
                 const value = (messages.status==="true");
                 setIsOn(value);
                 const action = `${props.name} turned ${value ? "on" : "off"}`;
