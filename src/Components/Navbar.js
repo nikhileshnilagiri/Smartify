@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Devices, Dashboard,Menu as MenuIcon } from '@mui/icons-material';
+import { Devices, Dashboard,Menu as MenuIcon ,PeopleAltOutlined} from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import { Menu, MenuItem, Avatar, ListItemIcon, Divider, IconButton } from '@mui/material';
 import Settings from '@mui/icons-material/Settings';
@@ -67,6 +67,11 @@ function NavBar() {
             <li className="nav-item me-3" onClick={handleDevices}>
               <span className="nav-link fs-6">
                 <Devices fontSize="small" /> Devices
+              </span>
+            </li>
+            <li className="nav-item me-3" onClick={handleDevices}>
+              <span className="nav-link fs-6">
+                <PeopleAltOutlined fontSize="small" /> Users
               </span>
             </li>
             <li className="nav-item">

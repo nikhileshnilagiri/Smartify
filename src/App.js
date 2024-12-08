@@ -6,6 +6,7 @@ import Navbar from "./Components/Navbar";
 import Dashboard from "./Pages/Dashboard";
 import Devices from "./Pages/Devices";
 import Settings from "./Pages/Settings";
+import Users from "./Pages/Users"
 import { UserProvider } from "./Context/UserContext";
 import { WebSocketProvider } from './Context/WebSocketContext';
 import Cookies from 'js-cookie';
@@ -29,6 +30,7 @@ function App() {
                 <Routes>
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                   <Route path="/devices" element={<ProtectedRoute><Devices /></ProtectedRoute>} />
+                  <Route path="/users" element={<ProtectedRoute><Users/></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 </Routes>
               </>
