@@ -61,5 +61,23 @@ router.post('/changepassword', async (req, res) => {
         res.status(500).json({ message: 'An error occurred while updating the password' });
     }
 });
+router.post('/saveUser', async (req, res) => {
+    const { name,email,guestId,adminEmail } = req.body;
+    try {
+        const user = await UserDetails.findOne({ email: adminEmail });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Adding guest to the user's guestUsers array
+        user.guestUsers.push({ name: name, email: email, guestId });
+        await user.save();
+
+        res.status(200).json({ message: "Guest user added successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error adding guest user" });
+    }
+});
 
 module.exports = router;

@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../Context/UserContext';
 import { toast, Slide, ToastContainer } from 'react-toastify';
 import Cookies from 'js-cookie';
+import Popup from '../Components/UserPopUp'; // Assuming Popup is imported here
 
 function Login() {
   const [data, setData] = useState({ email: '', password: '' });
-  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
   const { setUser } = useUser();
+  const navigate = useNavigate();
 
   const handleSignUp = () => navigate('/signup');
   
@@ -26,6 +28,9 @@ function Login() {
         Cookies.set('authToken', authtoken, { expires: 7 });
         Cookies.set('user', JSON.stringify(user), { expires: 7 });
         setUser(user);
+
+        // When login is successful, you can trigger the popup to confirm user creation
+        setShowPopup(true);
         navigate("/dashboard");
       } else {
         toast.error('Invalid Credentials!', {
@@ -66,7 +71,7 @@ function Login() {
                 fullWidth
                 margin="normal"
                 placeholder="Enter your email"
-                onChange={(e) => setData(prevData => ({ ...prevData, email: e.target.value }))}
+                onChange={(e) => setData(prevData => ({ ...prevData, email: e.target.value }))} 
               />
 
               <TextField
@@ -76,7 +81,7 @@ function Login() {
                 fullWidth
                 margin="normal"
                 placeholder="Enter your password"
-                onChange={(e) => setData(prevData => ({ ...prevData, password: e.target.value }))}
+                onChange={(e) => setData(prevData => ({ ...prevData, password: e.target.value }))} 
               />
 
               <div className="d-flex justify-content-between align-items-center mb-4">
@@ -109,6 +114,15 @@ function Login() {
           </div>
         </div>
       </div>
+
+      {/* Conditionally render the Popup */}
+      {showPopup && (
+        <Popup 
+          onClose={() => setShowPopup(false)} 
+          newUser={data} 
+          adminEmail={data.email}  // Pass the admin email from login
+        />
+      )}
     </section>
   );
 }

@@ -24,6 +24,7 @@ function NavBar() {
   const handleDashboard = () => navigate("/dashboard");
   const handleDevices = () => navigate("/devices");
   const handleSettings = () => navigate("/settings");
+  const handleUsers = () => navigate("/Users");
   const handleLogout = () => {
     logout()
     navigate('/');
@@ -69,7 +70,7 @@ function NavBar() {
                 <Devices fontSize="small" /> Devices
               </span>
             </li>
-            <li className="nav-item me-3" onClick={handleDevices}>
+            <li className="nav-item me-3" onClick={handleUsers}>
               <span className="nav-link fs-6">
                 <PeopleAltOutlined fontSize="small" /> Users
               </span>

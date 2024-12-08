@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "../Context/UserContext";
 import Footer from "../Components/Footer";
 import { TextField } from "@mui/material";
+import Popup from "../Components/UserPopUp"; // Import the Popup component
 
 export default function Users() {
   const { user } = useUser();
@@ -11,8 +12,9 @@ export default function Users() {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
-    role: "",
   });
+
+  const [showPopup, setShowPopup] = useState(false); // Manage the visibility of the popup
 
   useEffect(() => {
     setIsLoaded(true);
@@ -27,8 +29,11 @@ export default function Users() {
   };
 
   const handleSaveUser = () => {
-    console.log("New User: ", newUser);
-    setNewUser({ name: "", email: "", role: "" });
+    setShowPopup(true); // Show the popup on Save User button click
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
   return (
@@ -58,7 +63,6 @@ export default function Users() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ maxWidth: "500px" }}
                 />
-                <TextField id="standard-basic" label="Standard" variant="standard" onClick={(e) => setSearchTerm(e.target.value)} />
               </div>
             </div>
           </div>
@@ -76,14 +80,26 @@ export default function Users() {
             {/* User Input Fields */}
             <div className="card-body">
               <div className="mb-3">
-                <TextField id="standard-basic" label="Username" variant="standard" onClick={handleInputChange} />
+                <TextField
+                  id="username"
+                  label="Username"
+                  variant="outlined"
+                  fullWidth
+                  name="name"
+                  value={newUser.name}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="mb-3">
-                <TextField id="standard-basic" label="Email" variant="standard" onClick={handleInputChange} />
-              </div>
-
-              <div className="mb-3">
-                <TextField id="standard-basic" label="Password" variant="standard" onClick={handleInputChange} />
+                <TextField
+                  id="email"
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  name="email"
+                  value={newUser.email}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="d-flex justify-content-start">
@@ -98,6 +114,9 @@ export default function Users() {
           </div>
         </section>
       </div>
+
+      {/* Popup for Confirmation */}
+      {showPopup && <Popup onClose={handleClosePopup} newUser={newUser} />}
 
       <Footer />
     </main>
