@@ -1,22 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Pages/Login";
 import Signup from "./Pages/SignUp";
 import Navbar from "./Components/Navbar";
+import GuestNavbar from "./Components/GuestNavbar";
 import Dashboard from "./Pages/Dashboard";
 import Devices from "./Pages/Devices";
 import Settings from "./Pages/Settings";
-import Users from "./Pages/Users"
+import Users from "./Pages/Users";
 import { UserProvider } from "./Context/UserContext";
-import { WebSocketProvider } from './Context/WebSocketContext';
-import Cookies from 'js-cookie';
+import { WebSocketProvider } from "./Context/WebSocketContext";
+import Cookies from "js-cookie";
 
 const ProtectedRoute = ({ children }) => {
-  const token = Cookies.get('authToken');
-  return token ? children : <Navigate to="/" replace />;
+  const authToken = Cookies.get("authToken");
+  const guestToken = Cookies.get("guestToken");
+
+  if (authToken) {
+    console.log("ProtectedRoute: User is authenticated as admin.");
+    return children; // Admin access
+  } else if (guestToken) {
+    console.log("ProtectedRoute: User is authenticated as guest.");
+    return children; // Guest access
+  } else {
+    console.log("ProtectedRoute: No valid session. Redirecting to login.");
+    return <Navigate to="/" replace />;
+  }
 };
 
 function App() {
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    const updateGuestStatus = () => {
+      const authToken = Cookies.get("authToken");
+      const guestToken = Cookies.get("guestToken");
+
+      console.log(`App.js: Checking tokens - Auth token: ${authToken} Guest token: ${guestToken}`);
+      if (authToken) {
+        setIsGuest(false);
+        console.log("App.js: User is logged in as admin.");
+      } else if (guestToken) {
+        setIsGuest(true);
+        console.log("App.js: User is logged in as guest.");
+      } else {
+        setIsGuest(false);
+        console.log("App.js: No user is logged in.");
+      }
+    };
+
+    // Initial token check
+    updateGuestStatus();
+
+    // Periodic checks
+    const intervalId = setInterval(updateGuestStatus, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <UserProvider>
       <WebSocketProvider>
@@ -26,11 +66,11 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="*" element={
               <>
-                <Navbar />
+                {isGuest ? <GuestNavbar /> : <Navbar />}
                 <Routes>
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                   <Route path="/devices" element={<ProtectedRoute><Devices /></ProtectedRoute>} />
-                  <Route path="/users" element={<ProtectedRoute><Users/></ProtectedRoute>} />
+                  <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 </Routes>
               </>

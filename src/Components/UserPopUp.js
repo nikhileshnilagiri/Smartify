@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import '../index.css';  // Import your global CSS here
+import axios from 'axios'; // Import Axios
+import '../index.css';  // Global styles
 
 const UserPopup = ({ onClose, newUser, adminEmail }) => {
   const [adminPassword, setAdminPassword] = useState("");
@@ -10,38 +11,33 @@ const UserPopup = ({ onClose, newUser, adminEmail }) => {
   };
 
   const handleSubmit = async () => {
-    // Simple password validation (you can replace this with real validation)
     if (adminPassword === "admin123") {
-      const guestId = Math.random().toString(36).substr(2, 9); // Generate a small unique guest ID
+      const guestId = Math.random().toString(36).substring(2, 9);
 
-      // Prepare the data to send to the backend
       const userData = {
         name: newUser.name,
         email: newUser.email,
-        guestId: guestId,
-        adminEmail: adminEmail // Send the admin email as part of the request
+        guestId,
+        adminEmail,
       };
 
-      // Send the POST request to the backend
       try {
-        const response = await fetch(`${process.env.REACT_APP_URL}/user/saveUser`, {
-          method: "POST",
+        // Sending a POST request using Axios
+        const response = await axios.post(`http://localhost:8080/addUser/guests`, userData, {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(userData),  // Convert the user data into JSON format
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to create user");
+        // Handle the success response
+        if (response.status === 200) {
+          console.log("User Created Successfully:", response.data);
+          onClose();  // Close the popup
         }
-
-        const result = await response.json(); // Assuming the backend returns a JSON response
-        console.log("User Created Successfully:", result);
-        onClose(); // Close the popup after submission
       } catch (error) {
-        console.error("Error creating user:", error);
+        // Handle the error response
         setErrorMessage("Error creating user. Please try again.");
+        console.error("Error:", error.response ? error.response.data : error.message);
       }
     } else {
       setErrorMessage("Incorrect Admin Password!");
