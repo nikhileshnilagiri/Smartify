@@ -29,8 +29,10 @@ function Login() {
         Cookies.set("authToken", authtoken, { expires: 7 });
         Cookies.set("user", JSON.stringify(user), { expires: 7 });
         setUser(user);
+        console.log(user);
         console.log("Login.js: Admin login successful. Navigating to dashboard.");
-        navigate("/dashboard");
+        // Pass adminEmail as state to the next page
+        navigate("/dashboard", { state: { adminEmail: user.email } });
       } else {
         toast.error("Invalid Credentials!", {
           position: "top-center",
@@ -93,20 +95,10 @@ function Login() {
                 onChange={(e) => setData((prev) => ({ ...prev, password: e.target.value }))}
               />
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <FormControlLabel
-                  control={<Checkbox defaultChecked />}
-                  label="Remember me"
-                />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Remember me" />
                 Forgot password?
               </div>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                className="mb-3"
-              >
+              <Button type="submit" variant="contained" color="primary" fullWidth size="large" className="mb-3">
                 Login
               </Button>
               <hr />
@@ -117,8 +109,7 @@ function Login() {
               fullWidth
               size="large"
               className="mb-3"
-              onClick={handleGuestLogin}
-            >
+              onClick={handleGuestLogin}>
               Continue as Guest
             </Button>
             <Typography variant="body2" align="center" color="black" className="mt-3">

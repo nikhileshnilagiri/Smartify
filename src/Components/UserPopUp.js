@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import axios from 'axios'; // Import Axios
-import '../index.css';  // Global styles
+import "../index.css"; // Global styles
 
 const UserPopup = ({ onClose, newUser, adminEmail }) => {
   const [adminPassword, setAdminPassword] = useState("");
@@ -12,32 +11,35 @@ const UserPopup = ({ onClose, newUser, adminEmail }) => {
 
   const handleSubmit = async () => {
     if (adminPassword === "admin123") {
-      const guestId = Math.random().toString(36).substring(2, 9);
-
       const userData = {
         name: newUser.name,
         email: newUser.email,
-        guestId,
-        adminEmail,
+        guestId: Math.random().toString(36).substring(2, 9),
+        adminEmail:"hrithik2537H@gmail.com", // Make sure this is passed from parent component
       };
 
+      console.log("Submitting User Data:", userData);
+
       try {
-        // Sending a POST request using Axios
-        const response = await axios.post(`http://localhost:8080/addUser/guests`, userData, {
+        const response = await fetch(`${process.env.REACT_APP_URL}/user/add`, {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify(userData),
         });
 
-        // Handle the success response
-        if (response.status === 200) {
-          console.log("User Created Successfully:", response.data);
-          onClose();  // Close the popup
+        if (response.ok) {
+          const result = await response.json();
+          console.log("User added successfully:", result);
+          onClose(); // Close the popup
+        } else {
+          console.error("Failed to add user:", response.statusText);
+          setErrorMessage("Failed to add user. Please try again.");
         }
       } catch (error) {
-        // Handle the error response
-        setErrorMessage("Error creating user. Please try again.");
-        console.error("Error:", error.response ? error.response.data : error.message);
+        console.error("Error during user creation:", error);
+        setErrorMessage("An error occurred. Please try again.");
       }
     } else {
       setErrorMessage("Incorrect Admin Password!");

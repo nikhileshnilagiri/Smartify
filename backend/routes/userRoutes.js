@@ -21,44 +21,10 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-router.post("/addUser/guests", async (req, res) => {
-    const { name, email, guestId, adminEmail } = req.body; // Destructure the data from the request body
-  
-    // Basic validation
-    if (!name || !email || !guestId || !adminEmail) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-  
-    try {
-      // Check if the user already exists in the database
-      const existingUser = await UserDetails.findOne({ email: adminEmail });
-      if (!existingUser) {
-        return res.status(404).json({ message: "Admin user not found" });
-      }
-  
-      // Create a new guest object
-      const newGuest = {
-        name,
-        email,
-        guestId,
-      };
-  
-      // Add the guest to the admin user's guest list
-      existingUser.guests.push(newGuest);
-  
-      // Save the updated user with the new guest data
-      await existingUser.save();
-  
-      // Respond with success
-      res.status(200).json({
-        message: "Guest added successfully",
-        guests: existingUser.guests,
-      });
-    } catch (error) {
-      console.error("Error saving guest:", error);
-      res.status(500).json({ message: "Error saving guest", error: error.message });
-    }
-  });
+
+
+
+
 
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;

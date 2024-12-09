@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bonjour = require('bonjour');
 require('dotenv').config();
+const {UserDetails} = require('./model/User'); // Adjust the path as per your folder structure
+
 
 //local Imports
 const userRoutes = require('./routes/userRoutes');
@@ -20,16 +22,37 @@ const server = http.createServer(app);
 const bonjourInstance = bonjour();
 
 bonjourInstance.publish({
-  name: 'My WebSocket Server',
-  type: 'websocket',
+ name: 'My WebSocket Server',
+   type: 'websocket',
   port: 8080,
-  host: 'backend.local'
+   host: 'backend.local'
 });
 
 const wss = new WebSocket.Server({server});
 
 app.get('/', (req, res) => {
   res.send('<h1>Welcome to the HTTP Server with Express!</h1>');
+});
+
+app.post("/user/add", async (req, res) => {
+    const { name, email, guestId, adminEmail } = req.body;
+
+    try {
+        // Find the admin user by email
+        const adminUser = await UserDetails.findOne({ email: adminEmail });
+        if (!adminUser) {
+            return res.status(404).json({ message: "Admin user not found" });
+        }
+
+        // Add the guest to the admin's guest list
+        adminUser.guests.push({ name, email, guestId });
+        await adminUser.save();
+
+        res.status(201).json({ message: "Guest added successfully", guests: adminUser.guests });
+    } catch (error) {
+        console.error("Error adding guest:", error);
+        res.status(500).json({ message: "Failed to add guest", error: error.message });
+    }
 });
 
 mongoose.connect(process.env.MONGODB_URI)
