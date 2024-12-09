@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Pages/Login";
 import Signup from "./Pages/SignUp";
+import ForgotPassword from "./Pages/forgotpassword";
 import Navbar from "./Components/Navbar";
 import Dashboard from "./Pages/Dashboard";
 import Devices from "./Pages/Devices";
@@ -24,6 +25,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+           
             <Route path="*" element={
               <>
                 <Navbar />

@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
-import { Button, TextField, Checkbox, FormControlLabel, Typography } from '@mui/material';
+import { Button, TextField, Checkbox, FormControlLabel, Typography} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../Context/UserContext';
 import { toast, Slide, ToastContainer } from 'react-toastify';
 import Cookies from 'js-cookie';
+import ForgotPassword from './forgotpassword';
 
 function Login() {
   const [data, setData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
   const { setUser } = useUser();
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const handleSignUp = () => navigate('/signup');
-  
+  const handleForgotPasswordOpen = () => setIsForgotPasswordOpen(true);
+  const handleForgotPasswordClose = () => setIsForgotPasswordOpen(false);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.REACT_APP_URL}/user/login`, {
+      const response = await fetch(`${process.env.REACT_APP_URL}/api/user/login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -58,7 +62,6 @@ function Login() {
               Login to Your Account
             </Typography>
             <form onSubmit={handleLogin}>
-
               <TextField
                 label="Email Address"
                 variant="outlined"
@@ -84,7 +87,12 @@ function Login() {
                   control={<Checkbox defaultChecked />}
                   label="Remember me"
                 />
-                Forgot password?
+                <Typography
+                  style={{ cursor: "pointer", color: "blue" }}
+                  onClick={handleForgotPasswordOpen}
+                >
+                  Forgot password?
+                </Typography>
               </div>
 
               <Button
@@ -98,7 +106,7 @@ function Login() {
                 Login
               </Button>
 
-              <hr/>
+              <hr />
             </form>
             <Typography variant="body2" align="center" color="black" className="mt-3">
               Don't have an account?{' '}
@@ -109,6 +117,9 @@ function Login() {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Dialog */}
+      <ForgotPassword open={isForgotPasswordOpen} onClose={handleForgotPasswordClose} />
     </section>
   );
 }

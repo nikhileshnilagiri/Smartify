@@ -22,7 +22,8 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     rooms: [RoomSchema],
     devices: [DeviceSchema],
-    activitylog:[ActivitySchema]
+    activitylog:[ActivitySchema],
+    
 });
 
 const UserDetails = mongoose.model("UserDetails", UserSchema);

@@ -44,7 +44,7 @@ app.post('/modeldata',async (req,res)=>{
 })
 
 app.use('/',serviceRoutes);
-app.use('/user',userRoutes);
+app.use('/api/user',userRoutes);
 app.use('/device',deviceRoutes);
 
 
