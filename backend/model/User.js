@@ -17,9 +17,9 @@
     });
 
     const GuestSchema = new mongoose.Schema({
-        name: { type: String, required: true },
+        name: { type: String },
         email: { type: String, unique: true },
-        guestId: { type: String, required: true, }
+        password: {type:String}
     })
 
     const UserSchema = new mongoose.Schema({

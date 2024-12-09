@@ -74,4 +74,23 @@ router.post('/updatedevice', async (req, res) => {
     }
 });
 
+router.post('/guest', async (req, res) => {
+    const { email, data } = req.body;
+    console.log(email);
+  
+    try {
+      const user = await UserDetails.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: "Admin user not found" });
+      }
+      user.guests.push(data);
+      await user.save();
+      res.status(201).json({ message: "Guest added successfully", guests: user.guests });
+    } catch (error) {
+      console.error("Error adding guest:", error);
+      res.status(500).json({ message: "Failed to add guest", error: error.message });
+    }
+  });
+  
+
 module.exports = router;

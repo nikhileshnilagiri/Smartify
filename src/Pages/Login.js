@@ -9,7 +9,8 @@ import GoogleAuth from '../Components/GoogleAuth';
 function Login() {
   const [data, setData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { setUser,setGuest } = useUser();
+
 
   const handleSignUp = () => navigate('/signup');
   
@@ -23,10 +24,17 @@ function Login() {
       });
 
       if (response.ok) {
-        const { authtoken, user } = await response.json();
-        Cookies.set('authToken', authtoken, { expires: 7 });
-        Cookies.set('user', JSON.stringify(user), { expires: 7 });
-        console.log(user);
+        const { authtoken, user,role,guestToken } = await response.json();
+        console.log({ authtoken, user, role, guestToken });
+        if(role==="admin"){
+          Cookies.set('authToken', authtoken, { expires: 7 });
+          Cookies.set('user', JSON.stringify(user), { expires: 7 });
+        }else if(role==="guest"){
+          Cookies.set('guestToken', guestToken, { expires: 7 });
+          Cookies.set('user', JSON.stringify(user), { expires: 7 });
+          Cookies.set('role', JSON.stringify({role:'Guest'}), { expires: 7 });
+          setGuest(true)
+        }
         setUser(user);
         navigate("/dashboard");
       } else {

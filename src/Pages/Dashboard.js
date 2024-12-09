@@ -11,15 +11,25 @@ import RecentActivity from "../Components/RecentActivity"
 import QuickActions from "../Components/QuickActions";
 import PowerUsage from "../Components/PowerUsage";
 import Footer from "../Components/Footer";
+import {jwtDecode} from "jwt-decode";
+import Cookies from "js-cookie";
 
 function Dashboard() {
   const [value, setValue] = useState(0);
-  const { user } = useUser();
+  const { user,isGuest } = useUser();
+  const [guestName, setGuestName] = useState("");
 
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
+    if (isGuest) {
+      const token = Cookies.get("guestToken");
+      if (token) {
+        const decoded = jwtDecode(token);
+        setGuestName(decoded.username);
+      }
+    }
   }, [])
 
   const handleChange = (event, newValue) => {
@@ -30,14 +40,18 @@ function Dashboard() {
     <main className={`fade-in ${isLoaded ? "visible" : ""}`}>
       <div className="container mt-4 pt6">
 
-        <section>
-          <div className="d-flex justify-content-between mb-3">
-            <div>
-              <h2 className="fw">Hello, {user.username}!</h2>
-              <p>Welcome back to your home</p>
-            </div>
+      <section>
+        <div className="d-flex justify-content-between mb-3">
+          <div>
+            <h2 className="fw">
+              Hello, {
+                isGuest ?guestName:user.username
+              }!
+            </h2>
+            <p>Welcome back to your home</p>
           </div>
-        </section>
+        </div>
+      </section>
 
         <section>
           <div>

@@ -7,6 +7,9 @@ export const UserProvider = ({ children }) => {
   const loadUserData = () => {
     const savedUserData = Cookies.get('user');
     const savedToken = Cookies.get('authToken');
+
+    const guestSaveData = Cookies.get('user');
+    const guestSaveToken = Cookies.get('guestToken');
     
     if (savedUserData && savedToken) {
       try {
@@ -14,22 +17,26 @@ export const UserProvider = ({ children }) => {
       } catch (e) {
         Cookies.remove('user');
         Cookies.remove('authToken');
-        return getDefaultUser();
+      }
+    }else if(guestSaveData && guestSaveToken){
+      try{
+        return { ...JSON.parse(savedUserData), authToken: savedToken }
+      }catch(e){
+        Cookies.remove('user');
+        Cookies.remove('guestToken');
       }
     }
-    return getDefaultUser();
   };
 
-  const getDefaultUser = () => ({
-    username: '',
-    email: '',
-    password: '',
-    rooms: [],
-    devices: [],
-    activitylog: [],
-  });
+  const loadRole = () =>{
+    const role = Cookies.get('role');
+    if (role){
+      return true;
+    }
+  }
 
   const [user, setUser] = useState(loadUserData);
+  const [isGuest,setGuest] = useState(loadRole);
 
   useEffect(() => {
     if (user && user.authToken) {
@@ -49,9 +56,12 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(getDefaultUser());
+    setUser(null);
     Cookies.remove('user');
     Cookies.remove('authToken');
+    Cookies.remove('guestToken');
+    Cookies.remove('role');
+    setGuest(false);
   };
 
   const newDevice = (device) => {
@@ -84,6 +94,13 @@ export const UserProvider = ({ children }) => {
     }));
   };
 
+  const guestUser = (user) =>{
+    setUser((prev) =>({
+      ...prev,
+      guests: [...prev.guests,user]
+    }))
+  }
+
   const authenticateUser = (token, userData) => {
     setUser({ ...userData, authToken: token });
     Cookies.set('authToken', token, { expires: 7 });
@@ -91,7 +108,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, authenticateUser, logout, newDevice, newRoom, removeDevice, updateDevice, logActivity }}>
+    <UserContext.Provider value={{ user, isGuest, setUser, setGuest, authenticateUser, logout, newDevice, newRoom, removeDevice, updateDevice, logActivity, guestUser}}>
       {children}
     </UserContext.Provider>
   );

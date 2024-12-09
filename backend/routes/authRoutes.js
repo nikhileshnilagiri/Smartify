@@ -19,33 +19,30 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await UserDetails.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        if (user.password !== password) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-        const token = setToken({ username: user.username, email: user.email });
-        res.status(200).json({
-            authtoken: token,
-            user: {
-                username: user.username,
-                email: user.email,
-                rooms: user.rooms,
-                devices: user.devices,
-                activitylog: user.activitylog,
-                guests: user.guests,
+        const admin = await UserDetails.findOne({ email });
+        if (admin) {
+            if (email === admin.email && password === admin.password) {
+                const token = setToken({ username: admin.username, email: admin.email });
+                return res.json({ authtoken:token,user:admin, role: 'admin' });
             }
-        });
+        }
+        const guest = await UserDetails.findOne({ "guests.email": email,"guests.password":password });
+        if (guest) {
+            const guestData = guest.guests.find(g => g.email === email);
+            const token = setToken({ username: guestData.name, email: guestData.email });
+            return res.json({ guestToken:token,user:guest, role: 'guest',name:guestData.name });
+        }
+
+        return res.status(400).json({ message: 'Email not authorized' });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error logging in" });
+        return res.status(500).json({ message: 'Server error', error });
     }
 });
+
 
 router.post('/changepassword', async (req, res) => {
     const { email, password, newpass } = req.body;

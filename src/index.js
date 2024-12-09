@@ -7,13 +7,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'react-toastify/dist/ReactToastify.css';
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { UserProvider } from './Context/UserContext';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <UserProvider>
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-    <App /></GoogleOAuthProvider>
+    <App /></GoogleOAuthProvider></UserProvider>
   </React.StrictMode>
 );
 

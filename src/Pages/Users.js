@@ -1,61 +1,84 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '../Context/UserContext';
 import Footer from '../Components/Footer';
-import { TextField, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel } from '@mui/material';
+import { TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Users() {
-  const { user } = useUser();
+  const { user,guestUser } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
-  const [newUser, setNewUser] = useState({
+  const [newUserData, setNewUserData] = useState({
     name: '',
     email: '',
+    password:'',
+    adminPassword: '',
   });
-  const [showPopup, setShowPopup] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const guestUsers = [
-    { name: 'John Doe', email: 'john@example.com' },
-    { name: 'Jane Smith', email: 'jane@example.com' },
-    // Add more users as needed
-  ];
+  const handleSubmit = async () => {
+    try {
+      if (user.password === newUserData.adminPassword) {
+        const data = {
+          name: newUserData.name,
+          email: newUserData.email,
+          password:newUserData.password
+        };
+  
+        try {
+          const response = await fetch(`${process.env.REACT_APP_URL}/api/user/guest`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email, data }),
+          });
+  
+          if (response.ok) {
+            toast.success("Added Successful!")
+            handleCloseDialog();
+            setNewUserData({name: '', email: '', password:'', adminPassword: ''});
+            guestUser(data);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }else{
+        console.log('failed');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
   const handleSaveUser = () => {
-    setShowPopup(true);
+    setDialogOpen(true);
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+    setNewUserData((prevState) => ({
+      ...prevState,
+      adminPassword: '',
+    }));
   };
 
   return (
     <main className={`d-flex flex-column min-vh-100 fade-in ${isLoaded ? 'visible' : ''}`}>
+      <ToastContainer/>
       <div className="container mt-4 pt6 flex-grow-1">
         <section>
           <h2 className="text-3xl font-weight-bold mb-4">User Management</h2>
         </section>
 
-        {/* User Management Card */}
         <section>
           <div className="card mb-5 shadow border-0">
             <div className="card-body">
-              <h5 className="card-title">Manage Users</h5>
-              <p className="card-text text-muted">
-                View and manage all users in your system.
-              </p>
+              <h5 className="card-title">Guest Users</h5>
+              <p className="card-text text-muted">View and search guest users in your system.</p>
             </div>
-
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
                 <input
@@ -68,40 +91,28 @@ export default function Users() {
                 />
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Guest Users Section with Table */}
-        <section>
-          <div className="card mb-5 shadow border-0">
-            <div className="card-body">
-              <h5 className="card-title">Guest Users</h5>
-              <p className="card-text text-muted">
-                View and search guest users in your system.
-              </p>
-            </div>
 
             <div className="card-body">
-              {/* Table Container */}
               <TableContainer component={Paper}>
                 <Table aria-label="guest users table">
                   <TableHead>
                     <TableRow>
-                      <TableCell>
-                        <TableSortLabel>Username</TableSortLabel>
-                      </TableCell>
+                      <TableCell>Username</TableCell>
                       <TableCell>Email</TableCell>
+                      <TableCell>Role</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {guestUsers
+                    {user.guests
                       .filter((guest) =>
                         guest.name.toLowerCase().includes(searchTerm.toLowerCase())
                       )
                       .map((guest, index) => (
                         <TableRow key={index}>
+                          
                           <TableCell>{guest.name}</TableCell>
                           <TableCell>{guest.email}</TableCell>
+                          <TableCell>Guest</TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
@@ -111,9 +122,8 @@ export default function Users() {
           </div>
         </section>
 
-        {/* Add New User Section */}
         <section>
-          <div className="card mb-5 shadow border-0">
+          <div className="card mb-5 shadow border-0 w-50">
             <div className="card-body">
               <h5 className="card-title">Add New User</h5>
               <p className="card-text text-muted">
@@ -121,43 +131,78 @@ export default function Users() {
               </p>
             </div>
 
-            {/* User Input Fields */}
             <div className="card-body">
               <div className="mb-3">
                 <TextField
-                  id="username"
                   label="Username"
-                  variant="outlined"
+                  variant="standard"
                   fullWidth
-                  name="name"
-                  value={newUser.name}
-                  onChange={handleInputChange}
+                  value={newUserData.name}
+                  onChange={(e) => {
+                    setNewUserData((prev) => ({ ...prev, name: e.target.value }));
+                  }}
                 />
               </div>
               <div className="mb-3">
                 <TextField
-                  id="email"
                   label="Email"
-                  variant="outlined"
+                  variant="standard"
                   fullWidth
-                  name="email"
-                  value={newUser.email}
-                  onChange={handleInputChange}
+                  value={newUserData.email}
+                  onChange={(e) => {
+                    setNewUserData((prev) => ({ ...prev, email: e.target.value }));
+                  }}
+                />
+              </div>
+              <div className="mb-3">
+                <TextField
+                  label="Password"
+                  variant="standard"
+                  fullWidth
+                  type="password"
+                  value={newUserData.password}
+                  onChange={(e) => {
+                    setNewUserData((prev) => ({ ...prev, password: e.target.value }));
+                  }}
                 />
               </div>
 
-              <div className="d-flex justify-content-start">
+              <div className="d-flex mt-4 justify-content-start">
                 <button
                   className="btn btn-success rounded-pill px-4"
                   onClick={handleSaveUser}
                 >
-                  Save User
+                  Add User
                 </button>
               </div>
             </div>
           </div>
         </section>
       </div>
+
+      <Dialog fullWidth open={dialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Confirm Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Enter Admin Password"
+            type="password"
+            fullWidth
+            variant="standard"
+            value={newUserData.adminPassword}
+            onChange={(e) => {
+              setNewUserData((prev) => ({ ...prev, adminPassword: e.target.value }));
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Footer />
     </main>
