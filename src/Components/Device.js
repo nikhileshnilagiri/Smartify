@@ -23,7 +23,7 @@ function Device(props) {
     const handleDelete = async () => {
         const data = { email: user.email, device: props.id };
         try {
-            const response = await fetch(`${process.env.REACT_APP_URL}/deletedevice`, {
+            const response = await fetch(`${process.env.REACT_APP_URL}/api/user/deletedevice`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),

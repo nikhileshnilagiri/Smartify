@@ -33,17 +33,13 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     if (user && user.authToken) {
-      Cookies.set('user', JSON.stringify({
-        username: user.username,
-        email: user.email,
-        rooms: user.rooms,
-        devices: user.devices,
-        activitylog: user.activitylog,
-      }), { expires: 7 });
+      console.log("Hello");
+      Cookies.set('user', JSON.stringify(user), { expires: 7 });
 
       Cookies.set('authToken', user.authToken, { expires: 7 });
     }
   }, [user]);
+
 
   const logActivity = (action) => {
     setUser((prev) => ({

@@ -1,64 +1,76 @@
 const express = require('express');
 const router = express.Router();
 const {UserDetails} = require('../model/User');
-const { setToken } = require('./auth');
 
-router.post("/signup", async (req, res) => {
-    const { username, email, password } = req.body;
+router.post("/newdevice", async (req, res) => {
+    const { email, devicedata } = req.body;
     try {
-        const user = new UserDetails({ username, email, password });
+        const user = await UserDetails.findOne({email});
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.devices.push(devicedata);
         await user.save();
-        res.status(201).json({ message: "Signup successful" });
+        res.status(200).json({ message: "Device added successfully" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error signing up" });
+        res.status(500).json({ message: "Error adding device" });
     }
 });
 
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+router.post("/newroom", async (req, res) => {
+    const { email, room } = req.body;
     try {
         const user = await UserDetails.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        if (user.password !== password) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-        const token = setToken({ username: user.username, email: user.email });
-        res.status(200).json({
-            authtoken: token,
-            user: {
-                username: user.username,
-                email: user.email,
-                rooms: user.rooms,
-                devices: user.devices,
-                activitylog: user.activitylog,
-            }
-        });
+        user.rooms.push(room);
+        await user.save();
+        res.status(200).json({ message: "Room added successfully" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error logging in" });
+        res.status(500).json({ message: "Error setting up room" });
     }
 });
 
-router.post('/changepassword', async (req, res) => {
-    const { email, password, newpass } = req.body;
+router.post('/deletedevice', async (req, res) => {
+    const { email, device } = req.body;
+    try {
+        const user = await UserDetails.findOne({ email });
+        if (user) {
+            user.devices.pull({ deviceid: device });
+            await user.save();
+            res.status(200).json({ message: "Device removed successfully" });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error deleting device" });
+    }
+    
+});
+
+router.post('/updatedevice', async (req, res) => {
+    const { email, deviceData} = req.body;
     try {
         const user = await UserDetails.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        if (user.password !== password) {
-            return res.status(400).json({ message: 'Incorrect current password' });
-        }
-        user.password = newpass;
-        await user.save();
+        const updateuser = await UserDetails.updateOne(
+            { email: email, 'devices.deviceid': deviceData.deviceid },
+            { $set: { 'devices.$': deviceData } }
+        );
 
-        res.status(200).json({ message: 'Password updated successfully' });
+        if (updateuser.modifiedCount === 0) {
+            return res.status(404).json({ message: 'Device not found or no update needed' });
+        }
+        res.status(200).json({ message: 'Device data updated successfully' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'An error occurred while updating the password' });
+        console.error('Error updating device data:', error);
+        res.status(500).json({ message: 'An error occurred while updating the device data' });
     }
 });
 

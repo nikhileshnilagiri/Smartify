@@ -1,30 +1,38 @@
-const mongoose = require('mongoose');
+    const mongoose = require('mongoose');
 
-const DeviceSchema = new mongoose.Schema({
-    deviceid: {type:String, required: true},
-    devicename: { type: String, required: true },
-    location: { type: String, required: true },
-    devicetype: { type: String, required: true },
-});
+    const DeviceSchema = new mongoose.Schema({
+        deviceid: {type:String},
+        devicename: { type: String},
+        location: { type: String},
+        devicetype: { type: String},
+    });
 
-const RoomSchema = new mongoose.Schema({
-    name: { type: String, required: true }
-});
+    const RoomSchema = new mongoose.Schema({
+        name: { type: String}
+    });
 
-const ActivitySchema = new mongoose.Schema({
-    action:{type: String, required:true},
-    timestamp:{type:Date,default:Date.now}
-});
+    const ActivitySchema = new mongoose.Schema({
+        action:{type: String},
+        timestamp:{type:Date,default:Date.now}
+    });
 
-const UserSchema = new mongoose.Schema({
-    username: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    rooms: [RoomSchema],
-    devices: [DeviceSchema],
-    activitylog:[ActivitySchema]
-});
+    const GuestSchema = new mongoose.Schema({
+        name: { type: String, required: true },
+        email: { type: String, unique: true },
+        guestId: { type: String, required: true, }
+    })
 
-const UserDetails = mongoose.model("UserDetails", UserSchema);
+    const UserSchema = new mongoose.Schema({
+        username: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+        googleId: {type: String},
+        rooms: [RoomSchema],
+        devices: [DeviceSchema],
+        activitylog:[ActivitySchema],
+        guests:[GuestSchema]
+    });
 
-module.exports = {UserDetails};
+    const UserDetails = mongoose.model("UserDetails", UserSchema);
+
+    module.exports = {UserDetails};

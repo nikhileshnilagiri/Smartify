@@ -64,6 +64,10 @@ code {
   opacity: 0.3;
 }
 
+.custom-back{
+  background: linear-gradient(to right, #3B82F6, #60A5FA);
+}
+
 @media (max-width: 991px) {
   .navbar-collapse {
     display: none;

@@ -1,18 +1,23 @@
-import { useState, useEffect } from "react";
-import { useUser } from "../Context/UserContext";
-import Footer from "../Components/Footer";
-import { TextField } from "@mui/material";
+import { useState, useEffect } from 'react';
+import { useUser } from '../Context/UserContext';
+import Footer from '../Components/Footer';
+import { TextField, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel } from '@mui/material';
 
 export default function Users() {
   const { user } = useUser();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
-
   const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    role: "",
+    name: '',
+    email: '',
   });
+  const [showPopup, setShowPopup] = useState(false);
+
+  const guestUsers = [
+    { name: 'John Doe', email: 'john@example.com' },
+    { name: 'Jane Smith', email: 'jane@example.com' },
+    // Add more users as needed
+  ];
 
   useEffect(() => {
     setIsLoaded(true);
@@ -27,12 +32,15 @@ export default function Users() {
   };
 
   const handleSaveUser = () => {
-    console.log("New User: ", newUser);
-    setNewUser({ name: "", email: "", role: "" });
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
   return (
-    <main className={`d-flex flex-column min-vh-100 fade-in ${isLoaded ? "visible" : ""}`}>
+    <main className={`d-flex flex-column min-vh-100 fade-in ${isLoaded ? 'visible' : ''}`}>
       <div className="container mt-4 pt6 flex-grow-1">
         <section>
           <h2 className="text-3xl font-weight-bold mb-4">User Management</h2>
@@ -56,14 +64,54 @@ export default function Users() {
                   placeholder="Search Users"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ maxWidth: "500px" }}
+                  style={{ maxWidth: '500px' }}
                 />
-                <TextField id="standard-basic" label="Standard" variant="standard" onClick={(e) => setSearchTerm(e.target.value)} />
               </div>
             </div>
           </div>
         </section>
 
+        {/* Guest Users Section with Table */}
+        <section>
+          <div className="card mb-5 shadow border-0">
+            <div className="card-body">
+              <h5 className="card-title">Guest Users</h5>
+              <p className="card-text text-muted">
+                View and search guest users in your system.
+              </p>
+            </div>
+
+            <div className="card-body">
+              {/* Table Container */}
+              <TableContainer component={Paper}>
+                <Table aria-label="guest users table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <TableSortLabel>Username</TableSortLabel>
+                      </TableCell>
+                      <TableCell>Email</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {guestUsers
+                      .filter((guest) =>
+                        guest.name.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                      .map((guest, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{guest.name}</TableCell>
+                          <TableCell>{guest.email}</TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          </div>
+        </section>
+
+        {/* Add New User Section */}
         <section>
           <div className="card mb-5 shadow border-0">
             <div className="card-body">
@@ -76,14 +124,26 @@ export default function Users() {
             {/* User Input Fields */}
             <div className="card-body">
               <div className="mb-3">
-                <TextField id="standard-basic" label="Username" variant="standard" onClick={handleInputChange} />
+                <TextField
+                  id="username"
+                  label="Username"
+                  variant="outlined"
+                  fullWidth
+                  name="name"
+                  value={newUser.name}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="mb-3">
-                <TextField id="standard-basic" label="Email" variant="standard" onClick={handleInputChange} />
-              </div>
-
-              <div className="mb-3">
-                <TextField id="standard-basic" label="Password" variant="standard" onClick={handleInputChange} />
+                <TextField
+                  id="email"
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  name="email"
+                  value={newUser.email}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="d-flex justify-content-start">

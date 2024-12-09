@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
-import { TextField, MenuItem, Select, InputLabel, FormControl, Button } from '@mui/material';
+import { TextField, Button } from '@mui/material';
 import { useUser } from "../Context/UserContext";
 import { toast,Slide, ToastContainer } from 'react-toastify';
 import Footer from "../Components/Footer";
@@ -19,7 +19,7 @@ function Settings() {
     e.preventDefault();
     try {
       if (passDetails.newpass === passDetails.confi && user.password === passDetails.current) {
-        const response = await fetch(`${process.env.REACT_APP_URL}/changepassword`, {
+        const response = await fetch(`${process.env.REACT_APP_URL}/api/auth/changepassword`, {
           method: 'POST',
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: user.email, password: user.password, newpass: passDetails.newpass })
@@ -83,82 +83,46 @@ function Settings() {
               <div className="card-body">
                 <h5 className="card-title mb-4">Change Password</h5>
                 <form>
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <TextField
                       label="Current Password"
                       type="password"
                       fullWidth
                       required
-                      variant="outlined"
-                      id="currentPassword"
+                      variant="standard"
                       value={passDetails.current}
                       onChange={(e) => setpassDetails((prev) => ({ ...prev, current: e.target.value }))} />
                   </div>
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <TextField
                       label="New Password"
                       type="password"
                       fullWidth
                       required
-                      variant="outlined"
-                      id="newPassword"
+                      variant="standard"
                       value={passDetails.newpass}
                       onChange={(e) => setpassDetails((prev) => ({ ...prev, newpass: e.target.value }))} />
                   </div>
-                  <div className="mb-3">
+                  <div className="mb-4">
                     <TextField
                       label="Confirm New Password"
                       type="password"
                       fullWidth
                       required
-                      variant="outlined"
-                      id="confirmPassword"
+                      variant="standard"
                       value={passDetails.confi}
                       onChange={(e) => setpassDetails((prev) => ({ ...prev, confi: e.target.value }))} />
                   </div>
-                  <Button variant="contained" style={{ backgroundColor: "black" }} onClick={handleUpdate}>
+                  <div className="mt-4">
+                  <Button variant="text" sx={{color:"black"}} onClick={handleUpdate}>
                     Update Password
                   </Button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
-          <div className="col-md-6 mb-3">
-            <div className="card border-0 shadow">
-              <div className="card-body">
-                <h5 className="card-title mb-4">Account Settings</h5>
-                <form>
-                  <div className="mb-3">
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel id="notification-label">Notifications</InputLabel>
-                      <Select
-                        labelId="notification-label"
-                        id="notification"
-                        label="Notifications">
-                        <MenuItem value="enabled">Enabled</MenuItem>
-                        <MenuItem value="disabled">Disabled</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div className="mb-3">
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel id="theme-label">Theme</InputLabel>
-                      <Select
-                        labelId="theme-label"
-                        id="theme"
-                        label="Theme">
-                        <MenuItem value="light">Light</MenuItem>
-                        <MenuItem value="dark">Dark</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <Button type="submit" variant="contained" style={{ backgroundColor: "black" }}>
-                    Save Changes
-                  </Button>
-                </form>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
       <Footer/>

@@ -14,8 +14,9 @@ function Signup() {
 
     const handleSignUp = async (e) =>{
       e.preventDefault();
+      console.log(data);
       try {
-        const response = await fetch(`${process.env.REACT_APP_URL}/user/signup`,{
+        const response = await fetch(`${process.env.REACT_APP_URL}/api/auth/signup`,{
           method:'POST',
           headers: { 'Content-Type':'application/json'},
           body:JSON.stringify(data)

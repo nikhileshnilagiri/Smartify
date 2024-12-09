@@ -8,13 +8,16 @@ const bonjour = require('bonjour');
 require('dotenv').config();
 
 //local Imports
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
-const deviceRoutes = require('./routes/deviceRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const {handleConnection} = require('./routes/socketMessages');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+  }));
 app.use(bodyParser.json());
 const server = http.createServer(app);
 const bonjourInstance = bonjour();
@@ -43,9 +46,9 @@ app.post('/modeldata',async (req,res)=>{
     res.status(200);
 })
 
-app.use('/',serviceRoutes);
-app.use('/user',userRoutes);
-app.use('/device',deviceRoutes);
+app.use('/api',serviceRoutes);
+app.use('/api/auth',authRoutes);
+app.use('/api/user',userRoutes);
 
 
 wss.on('connection', (ws) => {
